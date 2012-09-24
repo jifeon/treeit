@@ -104,6 +104,7 @@ User.prototype.save_actions = function ( client_actions, revision, listener ) {
       self = this,
       emitter = new Emitter;
 
+
   // проверяем актуальна ли ревизия, состояние которо отражено на клиенте. Если это так, то собираем патч деуйствий
   // произошедших за время с последнего обновления, иначе патчем будет создание всех существующих на данный момент
   // тасков
@@ -113,6 +114,28 @@ User.prototype.save_actions = function ( client_actions, revision, listener ) {
 
 
     var reinit          = !client_revision;
+
+    emitter.on( 'server_actions', function( server_actions ){
+
+      var server_side_patch = client_actions.diff( server_actions );
+      var db_patch = new DBPatch( { name : 'dbpatch', app : self.app } );
+      db_patch.copy_from( server_side_patch );
+      listener.stack <<= db_patch.apply_to_base( self );
+//    listener.stack <<= db_patch.save( self );// || 0;//$_GET[ 'revision' ];//$user->revision_id || $_GET[ 'revision' ] || 0;
+      listener.success( function(){
+
+        // в db_patch есть индекс, потому что там было apply_to_base
+
+        db_patch.copy_from( client_actions );
+        var client_side_patch = server_actions.diff( db_patch );
+
+        var template_params = client_side_patch.to_array();
+        template_params.revision = self.revision_id;
+        template_params.reinit   = reinit;
+
+        emitter.emit( 'success', template_params );
+      })
+    })
 
     var server_actions;
     if ( reinit ){
@@ -139,27 +162,6 @@ User.prototype.save_actions = function ( client_actions, revision, listener ) {
       })
     }
 
-    emitter.on( 'server_actions', function( server_actions ){
-
-      var server_side_patch = client_actions.diff( server_actions );
-      var db_patch = new DBPatch( { name : 'dbpatch', app : self.app } );
-      db_patch.copy_from( server_side_patch );
-      listener.stack <<= db_patch.apply_to_base( self );
-      listener.stack <<= db_patch.save( self );// || 0;//$_GET[ 'revision' ];//$user->revision_id || $_GET[ 'revision' ] || 0;
-      listener.success( function(){
-
-      // в db_patch есть индекс, потому что там было apply_to_base
-
-        db_patch.copy_from( client_actions );
-        var client_side_patch = server_actions.diff( db_patch );
-
-        var template_params = client_side_patch.to_array();
-        template_params.revision = self.revision_id;
-        template_params.reinit   = reinit;
-
-        emitter.emit( 'success', template_params );
-      })
-    })
   })
   return emitter;
 }

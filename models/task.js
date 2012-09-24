@@ -12,7 +12,7 @@ Task.prototype._init = function( params ){
   Task.parent._init.call(this, params);
 
   this._.client_parent_id.get = function( descripter ){
-    return "'life'";
+    return descripter.target.parent_id ? descripter.target.parent_id : "'life'";
   }
 }
 

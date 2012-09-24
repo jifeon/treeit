@@ -8,8 +8,16 @@ function DBPatch( params ){
 }
 
 DBPatch.prototype._init = function( params ){
-  if( params && params.actions ) params.actions = JSON.parse( params.actions );
+
+  if( params && params.actions ) var actions = JSON.parse( params.actions );
+
+  if( actions ){
+    params.create = actions.create;
+    params.update = actions.update;
+    params.remove = actions.remove;
+  }
   DBPatch.parent._init.call( this, params );
+
   this.client2serv = {};
 }
 
@@ -18,8 +26,8 @@ DBPatch.prototype.apply_to_base = function( user ) {
   var listener = new global.autodafe.lib.Listener({});
 
   listener.stack <<= this.apply_create_to_base( user );
-  listener.stack <<= this.apply_update_to_base();
-  listener.stack <<= this.apply_remove_to_base();
+//  listener.stack <<= this.apply_update_to_base();
+//  listener.stack <<= this.apply_remove_to_base();
   listener.success( function(){
     emitter.emit( 'success' );
   })
