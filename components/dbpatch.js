@@ -26,8 +26,8 @@ DBPatch.prototype.apply_to_base = function( user ) {
   var listener = new global.autodafe.lib.Listener({});
 
   listener.stack <<= this.apply_create_to_base( user );
-//  listener.stack <<= this.apply_update_to_base();
-//  listener.stack <<= this.apply_remove_to_base();
+  listener.stack <<= this.apply_update_to_base();
+  listener.stack <<= this.apply_remove_to_base();
   listener.success( function(){
     emitter.emit( 'success' );
   })
@@ -90,13 +90,13 @@ DBPatch.prototype.define_serv_id = function( id_type, task_params, task ) {
   var client_id = task_params[ s ];
   if ( client_id == null ) return true;
 
-  if ( this.client2serv[ client_id ] ) return true;
+  if ( !this.client2serv[ client_id ] ) return true;
   var link_task = this.client2serv[ client_id ];
 
   s = id_type + "_serv_id";
   task_params[ s ]  = link_task.id;
   var id_name       = id_type + '_id';
-  task.id_name      = link_task.id;
+  task[ id_name ]   = link_task.id;
   return true;
 }
 

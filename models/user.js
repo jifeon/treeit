@@ -121,19 +121,21 @@ User.prototype.save_actions = function ( client_actions, revision, listener ) {
       var db_patch = new DBPatch( { name : 'dbpatch', app : self.app } );
       db_patch.copy_from( server_side_patch );
       listener.stack <<= db_patch.apply_to_base( self );
-//    listener.stack <<= db_patch.save( self );// || 0;//$_GET[ 'revision' ];//$user->revision_id || $_GET[ 'revision' ] || 0;
       listener.success( function(){
+        listener.stack <<= db_patch.save( self );// || 0;//$_GET[ 'revision' ];//$user->revision_id || $_GET[ 'revision' ] || 0;
+        listener.success( function(){
 
         // в db_patch есть индекс, потому что там было apply_to_base
 
-        db_patch.copy_from( client_actions );
-        var client_side_patch = server_actions.diff( db_patch );
+          db_patch.copy_from( client_actions );
+          var client_side_patch = server_actions.diff( db_patch );
 
-        var template_params = client_side_patch.to_array();
-        template_params.revision = self.revision_id;
-        template_params.reinit   = reinit;
+          var template_params = client_side_patch.to_array();
+          template_params.revision = self.revision_id;
+          template_params.reinit   = reinit;
 
-        emitter.emit( 'success', template_params );
+          emitter.emit( 'success', template_params );
+        })
       })
     })
 
