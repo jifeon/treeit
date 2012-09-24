@@ -3,7 +3,7 @@
   var name        = 'ofio.search';
   var dependences = [
     'ofio.id',
-    'ofio.triggers',
+    'ofio.event_emitter',
     'ofio.utils'
   ];
 

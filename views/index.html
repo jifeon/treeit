@@ -1,10 +1,189 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-  <title>Autodafe hello world</title>
-</head>
-<body>
-  <h1>Hello world!</h1>
-</body>
-</html>
+{>"main.html"/}
+
+{<content}
+<link rel="stylesheet" href="/css/reset.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/forms.css">
+<link rel="stylesheet" href="/css/blocks.css">
+<link rel="stylesheet" href="/css/switch.css">
+<link rel="stylesheet" href="/css/todo.css">
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/lib/jquery.hotkeys.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.js"></script>
+  
+<script type="text/javascript" src="/js/lib/wud/wud.jquery.js"></script>
+<script type="text/javascript" src="/js/lib/wud/wud.visible.js"></script>
+<script type="text/javascript" src="/js/lib/wud/wud.animate.js"></script>
+<script type="text/javascript" src="/js/lib/jquery.api.stub.js"></script>
+
+<script type="text/javascript" src="/js/lib/ofio/ofio.id.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.search.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.logger.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.event_emitter.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.utils.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.ajax.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.json.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.text.js"></script>
+
+<script type="text/javascript" src="/js/pages/page.state.js"></script>
+<script type="text/javascript" src="/js/pages/page.hotkeys.js"></script>
+<script type="text/javascript" src="/js/pages/page.history.js"></script>
+<script type="text/javascript" src="/js/pages/page.history.save.js"></script>
+
+<script type="text/javascript" src="/js/pages/todo/todo_page.history.js"></script>
+<script type="text/javascript" src="/js/pages/todo/todo_page.state.js"></script>
+<script type="text/javascript" src="/js/pages/todo/todo_page.hotkeys.js"></script>
+<script type="text/javascript" src="/js/pages/todo/todo_page.todo_blocks.js"></script>
+<script type="text/javascript" src="/js/pages/todo/todo_page.menu.js"></script>
+
+<script type="text/javascript" src="/js/pages/todo/settings/todo_page.settings.js"></script>
+<script type="text/javascript" src="/js/pages/todo/features/todo_page.features.js"></script>
+
+<script type="text/javascript" src="/js/todo/model/task.patch.js"></script>
+<script type="text/javascript" src="/js/todo/model/task.subtasks.js"></script>
+
+
+
+<script type="text/javascript" src="/js/pages/todo/features/todo_page.dragndrop.js"></script>
+
+<script type="text/javascript" src="/js/todo/view/features/todo_block.dragndrop.js"></script>
+<script type="text/javascript" src="/js/todo/view/features/todo_block_item.dragndrop.js"></script>
+
+
+
+<script type="text/javascript" src="/js/lib/forms/textarea.js"></script>
+
+<script type="text/javascript" src="/js/lib/tools/queue/queue.js"></script>
+<script type="text/javascript" src="/js/lib/tools/queue/queue.item.js"></script>
+<script type="text/javascript" src="/js/lib/tools/popups.js"></script>
+<script type="text/javascript" src="/js/lib/tools/hotkeys_panel.js"></script>
+<script type="text/javascript" src="/js/lib/tools/checkbox.js"></script>
+<script type="text/javascript" src="/js/lib/tools/popup_window.js"></script>
+
+<script type="text/javascript" src="/js/pages/action.js"></script>
+<script type="text/javascript" src="/js/pages/todo/settings/addon.js"></script>
+<script type="text/javascript" src="/js/pages/todo/todo_page.js"></script>
+
+<script type="text/javascript" src="/js/todo/model/task.js"></script>
+<script type="text/javascript" src="/js/todo/view/task_view.js"></script>
+<script type="text/javascript" src="/js/todo/view/todo_block.js"></script>
+<script type="text/javascript" src="/js/todo/view/todo_block_item.js"></script>
+
+<script type="text/javascript" src="/js/lib/wud/wud.dragndrop.js"></script>
+<script type="text/javascript" src="/js/lib/wud/wud.position.js"></script>
+<script type="text/javascript" src="/js/lib/tools/drag_element.js"></script>
+
+
+
+
+<script type="text/javascript">
+    var page = new TodoPage({
+        messages : [
+//                <? if ( isset( $messages ) && count( $messages ) ) foreach( $messages as $message ) : ?>
+//    {
+//        message : '<?=$message[ 'text' ]?>',
+//            type    : '<?=$message[ 'type' ]?>'
+//    }<? if ( $message != end( $messages ) ) echo ","; ?>
+//    <? endforeach; ?>
+    ],
+    history_revision  : {?user.revision_id}{user.revision_id}{:else}0{/user.revision_id},
+    history_save_url  : '/save_task',
+            pre_pay_url       : '#',
+    start_actions     : {>"task.json"/},
+//    features          : {
+//        '<?=implode( "' : 1, '", $user->get_features() )?>' : 1
+//    },
+//    addons            : [
+//        {
+//            name        : 'dragndrop',
+//            price       : 30<? if ( $user->has_feature('DRAGNDROP') ) : ?>,
+//    expire_date : "<? echo $user->get_addon_expire_date('DRAGNDROP').'"'; endif;?>
+//    }
+//    ]
+    });
+</script>
+
+<div id="sample_block" class="block">
+    <div class="head">
+        <a class="big_checkbox" title="complete this task"></a>
+        <input type="text" value="" class="title">
+        <div class="big icon clean" title="remove all completed subtasks"></div>
+        <div class="big icon remove" title="delete this task"></div>
+        <div class="big icon create" title="add subtask"></div>
+        <!--<? if ( $user->has_feature( 'DRAGNDROP' ) ) { ?>-->
+        <div class="big icon drag" title=""></div>
+        <!--<? } ?>-->
+        <div class="expander" title="collapse / expand this tree"><div></div></div>
+    </div>
+    <ul class="tasks"></ul>
+    <div class="footer">
+        <a class="collapse_all" title="collapse all subtasks">collapse</a>
+        <a class="expand_all" title="expand all subtasks">expand</a>
+    </div>
+</div>
+
+<li id="sample_task" class="task">
+    <div class="branch">
+        <div class="branch_top"></div>
+        <div class="branch_bottom"></div>
+        <div class="branch_link"></div>
+    </div>
+    <div class="content">
+        <!--<? if ( $user->has_feature( 'DRAGNDROP' ) ) { ?>-->
+        <div class="top_drag_trigger drag_trigger"></div>
+        <div class="middle_drag_trigger drag_trigger"></div>
+        <div class="bottom_drag_trigger drag_trigger"></div>
+        <!--<? } ?>-->
+        <a class="mini_checkbox" title="complete this task"></a>
+        <div class="mini icon arrow" title="collapse / expand subtasks"></div>
+        <div class="tool_panel">
+            <!--<? if ( $user->has_feature( 'DRAGNDROP' ) ) { ?>-->
+            <div class="mini icon drag" title=""></div>
+            <!--<? } ?>-->
+            <div class="mini icon create" title="add subtask"></div>
+            <div class="mini icon remove" title="delete this task"></div>
+        </div>
+        <textarea class="title"></textarea>
+    </div>
+    <ul class="sub_tasks"></ul>
+</li>
+
+<div id="settings" class="info_block popup_window">
+    <a href="#" class="small close_popup">close</a>
+    <h1>Settings</h1>
+    <h2>Addons</h2>
+    <div id="dragndrop_addon" class="plugin">
+        <h3>Drag'n'drop</h3>
+        <div class="preview">
+            <div class="price">30 руб/год</div>
+            <div class="add bottom_round_button">Add</div>
+            <div class="cancel bottom_round_button hidden">Cancel</div>
+            <div class="prolong bottom_round_button hidden">Prolong</div>
+        </div>
+        <div class="description">
+            <div class="expire_date_message look_here hidden">Оплачено до <span class="expire_date"></span></div>
+            <p>Дополнение drag'n'drop позволяет перетаскивать блоки и записи при помощи мыши в другие блоки и записи.
+                Также можно легко сделать из подзаписи отдельный блок, просто перетащив подзапись на пустое место.</p>
+        </div>
+    </div>
+
+    <div id="settings_panel" class="footer">Заказано дополнений: <span id="addons_count">5</span> <a href="#" id="go_to_pay" class="look_here">продолжить</a></div>
+
+    <form name="wm_form" method="POST" action="https://merchant.webmoney.ru/lmi/payment.asp">
+        <input type="hidden" name="LMI_PAYMENT_AMOUNT" value="">
+        <input type="hidden" name="LMI_PAYMENT_DESC" value="">
+        <input type="hidden" name="LMI_PAYMENT_NO" value="">
+        <input type="hidden" name="LMI_PAYEE_PURSE" value="R429342217299">
+        <input type="hidden" name="LMI_SIM_MODE" value="0">
+        <input type="hidden" name="RND" value="">
+
+    </form>
+</div>
+
+<!-- $this->renderPartial( 'help' ); ?-->
+
+<!--<? if ( $user->has_feature( 'DRAGNDROP' ) ) { ?>-->
+<div id="drag_element"></div>
+<!--<? } ?>-->
+{/content}

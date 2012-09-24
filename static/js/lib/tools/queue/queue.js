@@ -104,7 +104,7 @@ Queue.prototype.remove = function ( item ) {
     this.count--;
     this._slice( item );
     delete this.items[ item.id ];
-    item.queue  = null;
+    item.remove_queue();
   }
 };
 

@@ -5,7 +5,7 @@ function Task ( params ) {
 Task.prototype = new Ofio({
   modules   : [
     'ofio.id',
-    'ofio.triggers',
+    'ofio.event_emitter',
     'ofio.logger',
     'ofio.utils',
     'ofio.json',
@@ -14,28 +14,26 @@ Task.prototype = new Ofio({
     'task.subtasks',
     'queue.item'
   ],
-  className : 'Task'
+  className   : 'Task',
+  ignoreNulls : [ 'serv_id' ]
 });
 
 
 Task.prototype.initVars = function () {
-  this.text       = '';
-  this.done       = false;
-  this.parent     = null;
-  this.serv_id    = null;
-  this.ex_params  = null;
-  this.level      = null;
+  this.text           = '';
+  this.done           = false;
+  this.parent         = null;
+  this.serv_id        = null;
+  this.ex_params      = {};
+  this.level          = null;
+
+  this.bad_symbol_re  = /[^a-zA-Z0-9а-яА-ЯёЁ .,!\|?@#$%\^&*()\[\]{}_+-=~:;'"`<>\/\\]/g;
 };
 
 
 Task.prototype.redefineVars = function ( variable ) {
   switch ( variable ) {
     case 'parent':
-    case 'serv_id':
-      break;
-
-    case 'ex_params':
-      this.ex_params = {};
       break;
 
     case 'level':
@@ -51,7 +49,7 @@ Task.prototype.redefineVars = function ( variable ) {
 
 Task.prototype.init = function ( params ) {
   this.constructor.prototype.init.call( this, params );
-  this.runTrigger( 'task.create', [ params ] );
+  this.emit( 'create', params );
 };
 
 
@@ -74,10 +72,10 @@ Task.prototype.get_params = function () {
 
 // ex_params
 Task.prototype.set_ex_param = function ( param_name, value ) {
-  if ( !this.ex_params ) this.ex_params = {};
+  if ( typeof this.ex_params != 'object' ) this.ex_params = {};
   if ( this.ex_params[ param_name ] == value ) return false; 
   this.ex_params[ param_name ] = value;
-  this.runTrigger( 'task.set_ex_param' );
+  this.emit( 'set_ex_param' );
 };
 
 
@@ -91,16 +89,7 @@ Task.prototype.set_ex_params = function ( ex_params ) {
   for ( var param_name in ex_params ) {
     this.ex_params[ param_name ] = ex_params[ param_name ];
   }
-  this.runTrigger( 'task.set_ex_param' );
-};
-
-
-Task.prototype.set_ex_param_recursively = function ( param_name, value ) {
-  this.each_subtask( function () {
-    this.set_ex_param_recursively( param_name, value );
-  });
-
-  this.set_ex_param( param_name, value );
+  this.emit( 'set_ex_param' );
 };
 
 
@@ -113,8 +102,8 @@ Task.prototype.get_ex_param = function ( param_name ) {
 Task.prototype.set_text = function ( text ) {
   text = text ? String( text ) : '';
   if ( this.text == text ) return false;
-  this.text = text;
-  this.runTrigger( 'task.set_text', [ text ] );
+  this.text = text.replace( this.bad_symbol_re, '' );
+  this.emit( 'set_text', text );
 };
 
 
@@ -128,7 +117,7 @@ Task.prototype.set_done = function ( done ) {
   done = Boolean( done );
   if ( this.done == done ) return false;
   this.done = done;
-  this.runTrigger( 'task.set_done', [ done ] );
+  this.emit( 'set_done', done );
 
   if ( this.done ) this.each_subtask( function () {
     this.set_done( done );
@@ -164,9 +153,10 @@ Task.prototype.set_serv_id = function ( serv_id ) {
 
 //parent
 Task.prototype.set_parent = function ( parent ) {
-  if ( !parent || this == parent || this.parent == parent ) return false;
+  if ( !parent || this == parent )  return new Error( 'parent is not specified' );
+  if ( this.parent == parent )      return false;
   this.parent     = parent;
-  this.runTrigger( 'task.set_parent', [ parent ] );
+  this.emit( 'set_parent', parent );
   return true;
 };
 
@@ -178,43 +168,43 @@ Task.prototype.get_parent = function ( level ) {
 };
 
 
-Task.prototype.set_new_parent = function ( parent, prev ) {
+// side == before|after|in
+Task.prototype.set_new_parent = function ( parent, sibling, side ) {
   var old_parent = this.parent;
-  if ( !this.set_parent( parent ) ) return false;
-  if ( Error.is( this.parent.subtasks.insert_after( this, prev ) ) )
-    this.parent.subtasks.add( this );
+
+  var set_parent_result = this.set_parent( parent );
+
+  if ( side != 'in' ) {
+    if ( Error.is( set_parent_result ) ) return set_parent_result;
+
+    var method = side == 'before' ? 'get_next' : 'get_prev';
+    if ( !set_parent_result && sibling == this[ method ]() )
+      return new Error( 'New position and current position are same' );
+
+    method = side == 'before' ? 'insert_before' : 'insert_after';
+
+    if ( Error.is( this.parent.subtasks[ method ]( this, sibling ) ) )
+      this.parent.add_subtask( this );
+  }
+  else this.parent.add_subtask( this );
+
   this.parent.update_levels();
   this.parent.check_done();
-  this.runTrigger( 'task.set_new_parent', [ parent, old_parent ] );
+  this.emit( 'set_new_parent', parent, old_parent );
 };
 
 
 // next
 Task.prototype.set_next = function ( next ) {
   if ( this.__ofio.modules[ 'queue.item' ].call( this, 'set_next', [ next ] ) )
-    this.runTrigger( 'task.set_next', [ next ] );
-};
-
-
-Task.prototype.get_next_task = function ( skip_subtasks ) {
-  if ( this.has_visible_subtasks() && !skip_subtasks ) return this.subtasks.get_first();
-  if ( this.next ) return this.next;
-  if ( this.parent && this.parent.id != 'life' ) return this.parent.get_next_task( true );
-  return this;
+    this.emit( 'set_next', next );
 };
 
 
 // prev
 Task.prototype.set_prev = function ( prev ) {
   if ( this.__ofio.modules[ 'queue.item' ].call( this, 'set_prev', [ prev ] ) )
-    this.runTrigger( 'task.set_prev', [ prev ] );
-};
-
-
-Task.prototype.get_prev_task = function () {
-  if ( this.prev ) return this.prev.get_absolute_last_task();
-  if ( this.parent ) return this.parent;
-  return this;
+    this.emit( 'set_prev', prev );
 };
 
 
@@ -231,4 +221,10 @@ Task.prototype.update_levels = function () {
     this.level = self.level + 1;
     this.update_levels();
   } );
+};
+
+
+Task.prototype.remove_queue = function() {
+  this.__ofio.modules[ 'queue.item' ].call( this, 'remove_queue' );
+  this.emit( 'remove_queue' );
 };

@@ -1,0 +1,22 @@
+{
+  "data"  : {>"actions.json"/},
+  "messages" : {
+    "errors" : [
+      {#errors}
+      {
+        "type"    :"{type}",
+        "content" :"{content}"
+      }{@sep},{/sep}
+      {/errors}
+],
+"info" : [
+      {#messages}
+      {
+        "type"    :"{type}",
+        "content" :"{content}>"
+      }{@sep},{/sep}
+      {/messages}
+    ]
+  },
+  "yii" : "ok"
+}

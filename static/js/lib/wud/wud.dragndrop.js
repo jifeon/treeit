@@ -3,7 +3,7 @@
   var name        = 'wud.dragndrop';
   var dependences = [
     'wud.position',
-    'ofio.triggers',
+    'ofio.event_emitter',
     'ofio.text',
     'ofio.utils'
   ];
@@ -11,7 +11,7 @@
   var mousedown = function ( e ) {
     if ( this.lock_drag ) return false;
     if ( typeof this.on_mousedown == "function" && this.on_mousedown.call( this, e ) === false ) return false;
-    this.runTrigger( 'wud.dragndrop.mousedown' );
+    this.emit( 'wud.dragndrop.mousedown' );
     this.dif_drag = {
       x : e.pageX - this.$$().offset().left,
       y : e.pageY - this.$$().offset().top
@@ -24,7 +24,7 @@
       y : this.root_element.offset().top
     };
 
-    this.text_selection.preventSelection( 'body' );
+    this.preventSelection( 'body' );
     $( document ).mousemove( this.mousemove );
     $( document ).mouseup(   this.mouseup   );
   };
@@ -42,27 +42,22 @@
 
 
   var mouseup = function ( e ) {
-    this.text_selection.unpreventSelection( 'body' );
+    this.unpreventSelection( 'body' );
     $( document ).unbind( 'mousemove',  this.mousemove  );
     $( document ).unbind( 'mouseup',    this.mouseup    );
-
-    if ( !this.is_moved ) {
-      this.dragging = false;
-      return false;
-    }
 
     this.old_position = this.utils.clone( this.Position() );
     this.Position( this.tmp_position, false );
 
     var onDropResult;
-    if ( typeof this.on_drop == 'function' && ( onDropResult = this.on_drop.call( this, this.oldPosition ) ) === false ) {
-      this.Position( this.oldPosition );
+    if ( typeof this.on_drop == 'function' && ( onDropResult = this.on_drop.call( this, this.old_position ) ) === false ) {
+      this.Position( this.old_position );
       this.tmpPosition = this.Position();
-      this.runTrigger( 'wud.dragndrop.mouseup.drop_false' );
+      this.emit( 'wud.dragndrop.mouseup.drop_false' );
       return false;
     }
 
-    this.runTrigger( 'wud.dragndrop.mouseup.drop_true', onDropResult );
+    this.emit( 'wud.dragndrop.mouseup.drop_true', onDropResult );
 
     this.dif_drag  = { x : 0, y : 0 };
     this.dragging = false;
@@ -132,7 +127,9 @@
       return true;
     };
 
-
+    this.start_drag = function( e ) {
+      mousedown.call( this, e );
+    };
   };
 
   new Ofio.Module ( {

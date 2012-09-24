@@ -4,8 +4,14 @@ function TodoBlock ( params ) {
 
 
 TodoBlock.prototype = new Ofio({
-  extend    : TaskView,
-  className : 'TodoBlock'
+  extend          : TaskView,
+  className       : 'TodoBlock',
+  modules         : [
+    'ofio.text'
+  ],
+  feature_modules : [
+    'todo_block.dragndrop'
+  ]
 });
 
 
@@ -33,7 +39,7 @@ TodoBlock.prototype.redefineVars = function ( variable ) {
 TodoBlock.prototype.init = function ( params ) {
   this.extend.init.call( this, params );
 
-  this.runTrigger( 'TodoBlock.init' );
+  this.emit( 'init' );
 };
 
 
@@ -75,23 +81,18 @@ TodoBlock.prototype.add_handlers = function () {
   this.elements.collapse.click( function () {
     self.collapse_all();
   } );
-
-  this.$.mouseenter( function () {
-    self.set_active( true );
-  } );
-
-  this.$.mouseleave( function () {
-    self.set_active( false );
-  } );
 };
 
+
+
+// ========== FOCUS ==========
 
 TodoBlock.prototype.focus = function ( focus_by ) {
   this.page.set_focused_todo_block( this );
   this.extend.focus.call( this, focus_by );
   if ( focus_by == 'title_focus' ) this.set_focused_subtask( null );
   this.$.addClass( 'focused' );
-  this.runTrigger( 'TodoBlock.focus' );
+  this.emit( 'focus' );
 };
 
 
@@ -99,26 +100,53 @@ TodoBlock.prototype.unfocus = function () {
   this.set_focused_subtask( null );
   this.extend.unfocus.call( this );
   this.$.removeClass( 'focused' );
-  this.runTrigger( 'TodoBlock.unfocus' );
-};
-
-
-TodoBlock.prototype.check_active = function () {
-  this.$[ this.is_active() ? 'addClass' : 'removeClass' ]( 'active' );
-};
-
-
-TodoBlock.prototype.create_subtask = function ( model ) {
-  this.extend.create_subtask.call( this, model, this );
+  this.emit( 'unfocus' );
 };
 
 
 TodoBlock.prototype.set_focused_subtask = function ( subtask ) {
-  if ( this.focused_subtask && !this.focused_subtask.model.eq( subtask && subtask.model ) )
-    this.focused_subtask.unfocus();
+  if ( subtask ) this.focus( 'subtask' );
+
+  if ( this.focused_subtask ) {
+    if ( !this.focused_subtask.model.eq( subtask && subtask.model ) )
+      this.focused_subtask.unfocus();
+  }
+  else this.save_title();
+
   this.focused_subtask = subtask;
 };
 
+
+// для нажатия кнопки вниз - выделится первое дитя
+TodoBlock.prototype.focus_down = function () {
+  this.elements.subtasks.find( '.title:visible:first' ).focus();
+};
+
+
+// для нажатия кнопки вверх
+TodoBlock.prototype.focus_up = function () {
+  this.elements.subtasks.find( '.title:visible:last' ).focus();
+};
+
+
+// выделить следующий блок или первый если такого нет
+TodoBlock.prototype.focus_next = function () {
+  var task = this.model.get_next( true );
+  var block = TaskView.get_by_model( task );
+  if ( block ) block.focus( 'hotkey' );
+};
+
+
+// выделит предыдущий блок
+TodoBlock.prototype.focus_prev = function () {
+  var task = this.model.get_prev( true );
+  var block = TaskView.get_by_model( task );
+  if ( block ) block.focus( 'hotkey' );
+};
+
+
+
+// ========== COLLAPSED ==========
 
 TodoBlock.prototype.set_collapsed = function ( collapsed ) {
   this.collapsed = collapsed == null ? false : Boolean( collapsed );
@@ -130,8 +158,8 @@ TodoBlock.prototype.set_collapsed = function ( collapsed ) {
 
 TodoBlock.prototype.expand_all = function () {
   this.model.each_subtask( function () {
-    this.set_ex_param_recursively( 'collapsed', false );
-  });
+    this.set_ex_param( 'collapsed', false );
+  }, true );
 };
 
 
@@ -142,44 +170,37 @@ TodoBlock.prototype.collapse_all = function () {
 };
 
 
-TodoBlock.prototype.focus_down = function () {
-  this.elements.subtasks.find( '.title:visible:first' ).focus();
-};
 
+// ========== CREATE ==========
 
-TodoBlock.prototype.focus_up = function () {
-  this.elements.subtasks.find( '.title:visible:last' ).focus();
-};
-
-
-TodoBlock.prototype.focus_next = function () {
-  var task = this.model.get_next( true );
-  if ( !task ) return false;
-  var block = TaskView.get_by_model_id( task.id );
-  if ( block ) block.focus( 'hotkey' );
-};
-
-
-TodoBlock.prototype.focus_prev = function () {
-  var task = this.model.get_prev( true );
-  if ( !task ) return false;
-  var block = TaskView.get_by_model_id( task.id );
-  if ( block ) block.focus( 'hotkey' );
-};
-
-
+// в блоке при нажатии на ентер создается подтаск, а не братский таск
 TodoBlock.prototype.create_sibling = function () {
-  this.set_user_actions_runned( true );
-  this.model.create_subtask();
-  this.set_user_actions_runned( false );
+  this.create_subtask_model();
 };
 
 
-TodoBlock.prototype.remove = function () {
-  this.page.remove_todo_block( this );
-  this.extend.remove.call( this );
+
+// ========== REMOVE ==========
+
+TodoBlock.prototype.before_remove = function () {
+  this.focus_prev();
 };
 
+
+
+// ========== PARENTS ==========
+
+TodoBlock.prototype.set_new_parent = function ( new_parent, old_parent ) {
+  this.extend.set_new_parent.call( this, new_parent, old_parent );
+  this.model.each_subtask( function () {
+    var view = TaskView.get_by_model_id( this.id );
+    view.set_title_width();
+  }, true );
+};
+
+
+
+// =========== PREV & NEXT ===========
 
 TodoBlock.prototype.set_next = function ( next_model ) {
   this.extend.set_next.call( this, next_model );
@@ -190,9 +211,4 @@ TodoBlock.prototype.set_next = function ( next_model ) {
 TodoBlock.prototype.set_prev = function ( prev_model ) {
   this.extend.set_prev.call( this, prev_model );
   if ( prev_model ) this.page.arrange_blocks();
-};
-
-
-TodoBlock.prototype.get_caret_pos = function () {
-  return 0;
 };

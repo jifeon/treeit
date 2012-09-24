@@ -25,7 +25,11 @@ HotkeysPanel.prototype.init = function ( params ) {
 
 HotkeysPanel.prototype.add_hotkey = function ( hk, description ) {
   if ( !hk || !description || this.hotkeys[ hk ] ) return false;
-  this.hotkeys[ hk ] = $('<div></div>').text( this.replace_special_symbols( hk ) + ' -> ' + description ).appendTo( this.$ );
+
+  var hk_span = $('<span class="hk"></span>').text( this.replace_special_symbols( hk )  );
+  var hkd_span = $('<span class="hk_descr"></span>').text( description );
+
+  this.hotkeys[ hk ] = $('<div></div>').append( hk_span ).append( hkd_span ).appendTo( this.$ );
   if ( this.very_hot[ hk ] ) this.hotkeys[ hk ].css({
     color : '#cc3300'
   })

@@ -3,7 +3,7 @@
   var name        = 'ofio.ajax';
   var dependences = [
     'ofio.logger',
-    'ofio.triggers'
+    'ofio.event_emitter'
   ];
 
 
@@ -18,7 +18,7 @@
         url       : url,
         data      : params,
         type      : 'POST',
-        error     : function ( xhr, status ) {
+        error     : function ( xhr, status, e ) {
           var err_msg;
 
           switch ( status ) {
@@ -44,12 +44,12 @@
             errors : [
               {
                 type     : 'server',
-                content  : err_msg
+                content  : err_msg + ( e ? '---' + e : '' )
               }
             ]
           };
 
-          self.runTrigger( 'ofio.ajax.error', [ messages ] );
+          self.emit( 'ofio.ajax.error', messages );
           callback( null, messages );
         },
 
@@ -62,11 +62,11 @@
               }]
             };
 
-            self.runTrigger( 'ofio.ajax.error', [ messages ] );
+            self.emit( 'ofio.ajax.error', messages );
             callback( null, messages );
           }
           else {
-            self.runTrigger( 'ofio.ajax.success', [ data.messages ] );
+            self.emit( 'ofio.ajax.success', data.messages );
             callback( data.data, data.messages );
           }
         },
@@ -90,7 +90,7 @@
             }]
           };
 
-          self.runTrigger( 'ofio.ajax.error', [ messages ] );
+          self.emit( 'ofio.ajax.error', messages );
         }
       }).responseText;
 
@@ -112,11 +112,11 @@
           ]
         };
 
-        self.runTrigger( 'ofio.ajax.error', [ messages ] );
+        self.emit( 'ofio.ajax.error', messages );
         return null;
       }
 
-      self.runTrigger( 'ofio.ajax.success', [ data.messages ] );
+      self.emit( 'ofio.ajax.success', data.messages );
       return data.data;
     }
   };

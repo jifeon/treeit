@@ -142,6 +142,15 @@
       }
       return num;
     };
+
+
+    this.substr = function( text, max, def ) {
+      return text.length
+        ? text.length < max
+          ? text
+          : text.substr( 0, max-2 ) + '...'
+        : def || '(без названия)';
+    }
   };
 
   new Ofio.Module ( {

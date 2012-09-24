@@ -118,7 +118,7 @@ Triggers
 
 (s)Top, (s)Left, (s)Position, (s)PositionEvent    -> changePosition        ( Object current_position )
 (s)Bottom, (s)Right                               -> changeSize            ( Object current_size     )
-quickSetPosition                                  -> Wud.quickSetPosition  ( Object position         )
+quickSetPosition                                  -> quickSetPosition  ( Object position         )
 
  */
 ;( function () {
@@ -126,7 +126,7 @@ quickSetPosition                                  -> Wud.quickSetPosition  ( Obj
   var name        = 'wud.position';
   var dependences = [
     'wud.animate',
-    'ofio.triggers',
+    'ofio.event_emitter',
     'wud.jquery',
     'ofio.utils'
   ];
@@ -220,7 +220,7 @@ quickSetPosition                                  -> Wud.quickSetPosition  ( Obj
           l = this.left,
           t = this.top;
 
-      this.runTrigger( 'changePosition', [ position = { x : x, y : y } ] );
+      this.emit( 'changePosition', position = { x : x, y : y } );
 
       this.position.x = l.valueInPx = position.x;
       this.position.y = t.valueInPx = position.y;
@@ -236,7 +236,7 @@ quickSetPosition                                  -> Wud.quickSetPosition  ( Obj
         ? Math.round( t.valueInPercent * 100 ) + '%'
         : t.valueInPx + 'px';
 
-      if ( animate || animate == undefined ) {
+      if ( animate ) {
         this.animate( { left : x, top : y }, callback );
       } else {
         this.$[0].style.left = x;
@@ -249,7 +249,7 @@ quickSetPosition                                  -> Wud.quickSetPosition  ( Obj
 
 
     this.quickSetPosition = function ( position ) {
-      this.runTrigger( 'Wud.quickSetPosition', [ position ] );
+      this.emit( 'quickSetPosition', position );
       this.$[0].style.left = position.x + "px";
       this.$[0].style.top  = position.y + "px";
       return this;

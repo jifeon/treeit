@@ -4,7 +4,7 @@
   var dependences = [
     'wud.jquery',
     'wud.animate',
-    'ofio.triggers'
+    'ofio.event_emitter'
   ];
 
   var module = new function () {
@@ -12,7 +12,7 @@
     this.hide = function ( animate, cb ) {
       var self = this;
       var trigger = function () {
-        self.runTrigger( 'wud.visible.hide' );
+        self.emit( 'visible.hide' );
         if ( typeof cb == 'function' ) cb();
       }
 
@@ -26,7 +26,7 @@
     this.show = function ( animate, cb ) {
       var self = this;
       var trigger = function () {
-        self.runTrigger( 'wud.visible.show' );
+        self.emit( 'visible.show' );
         if ( typeof cb == 'function' ) cb();
       }
 

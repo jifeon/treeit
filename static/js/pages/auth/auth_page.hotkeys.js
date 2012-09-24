@@ -15,6 +15,11 @@
         {
           elem  : document,
           hk    : {
+            'esc'     : {
+              action  : 'esc_key',
+              hint    : 'закрыть окно',
+              state   : this.STATE.SHOWN_POPUP_WINDOW
+            },
             'ctrl+m' : {
               action  : 'message_next',
               hint    : 'седующее сообщение',
@@ -44,6 +49,26 @@
               action  : 'show_reg_form',
               hint    : 'регистрация',
               state   : [ this.STATE.SHOWN_REM_FORM, this.STATE.SHOWN_LOGIN_FORM ]
+            },
+            'ctrl+4'  : {
+              action  : 'show_all_view',
+              hint    : 'общий вид',
+              state   : this.STATE.BLANK
+            },
+            'ctrl+5'  : {
+              action  : 'show_list_view',
+              hint    : 'как выглядит блок',
+              state   : this.STATE.BLANK
+            },
+            'ctrl+6'  : {
+              action  : 'show_list_view2',
+              hint    : 'действия',
+              state   : this.STATE.BLANK
+            },
+            'ctrl+7'  : {
+              action  : 'show_hotkeys',
+              hint    : 'горячие клавиши',
+              state   : this.STATE.BLANK
             }
           }
         }
@@ -82,7 +107,35 @@
           self.to_reg_form();
           self.reg_login_switch.to( 1 );
           return false;
-        }
+        };
+
+        this.show_all_view = function() {
+          this.features_switch.to( 0, true, true );
+          this.to_slide( 1 );
+          return false;
+        };
+
+        this.show_list_view = function() {
+          this.features_switch.to( 1, true, true );
+          this.to_slide( 2 );
+          return false;
+        };
+
+        this.show_list_view2 = function() {
+          this.features_switch.to( 2, true, true );
+          this.to_slide( 3 );
+          return false;
+        };
+
+        this.show_hotkeys = function() {
+          this.features_switch.to( 3, true, true );
+          this.to_slide( 4 );
+          return false;
+        };
+
+        this.esc_key = function() {
+          if ( PopupWindow.current_popup ) PopupWindow.current_popup.hide();
+        };
       };
     };
   };

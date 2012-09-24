@@ -3,7 +3,7 @@
   var name        = 'form_element';
   var dependences = [
     'wud.jquery',
-    'ofio.triggers'
+    'ofio.event_emitter'
   ];
 
   var module = new function () {
@@ -22,11 +22,11 @@
       var self = this;
 
       this.$.focus( function () {
-        self.runTrigger( 'form_element.focus' );
+        self.emit( 'focus' );
       } );
 
       this.$.blur( function () {
-        self.runTrigger( 'form_element.blur' );
+        self.emit( 'blur' );
       } );
     };
 

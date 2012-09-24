@@ -2,7 +2,7 @@
 
   var name        = 'auth_page.state';
   var dependences = [
-    'ofio.triggers',
+    'ofio.event_emitter',
     'ofio.logger'
   ];
 
@@ -18,7 +18,8 @@
         REM_FORM_EMAIL_ACTIVE               : 0x00000010,
         SHOWN_POPUP                         : 0x00000020,
         SHOWN_POPUP_HAS_MANY_MESSAGES       : 0x00000040,
-        SHOWN_REG_FORM                      : 0x00000080
+        SHOWN_REG_FORM                      : 0x00000080,
+        SHOWN_POPUP_WINDOW                  : 0x00000100
       }
     };
 
@@ -27,78 +28,79 @@
       var self = this;
 
       // auth_form
-      this.auth_form.addFunctionToTrigger( 'wud.visible.show', function () {
+      this.auth_form.on( 'visible.show', function () {
         self.add_state( self.STATE.SHOWN_LOGIN_FORM );
       } );
 
-      this.auth_form.addFunctionToTrigger( 'wud.visible.hide', function () {
+      this.auth_form.on( 'visible.hide', function () {
         self.remove_state( self.STATE.SHOWN_LOGIN_FORM );
       } );
 
-      this.auth_form.elements.email.addFunctionToTrigger( 'form_element.focus', function () {
+      this.auth_form.elements.email.on( 'focus', function () {
         self.add_state( self.STATE.LOGIN_FORM_EMAIL_ACTIVE );
       } );
 
-      this.auth_form.elements.email.addFunctionToTrigger( 'form_element.blur', function () {
+      this.auth_form.elements.email.on( 'blur', function () {
         self.remove_state( self.STATE.LOGIN_FORM_EMAIL_ACTIVE );
       } );
 
-      this.auth_form.elements.pass.addFunctionToTrigger( 'form_element.focus', function () {
+      this.auth_form.elements.pass.on( 'focus', function () {
         self.add_state( self.STATE.LOGIN_FORM_PASS_ACTIVE );
       } );
 
-      this.auth_form.elements.pass.addFunctionToTrigger( 'form_element.blur', function () {
+      this.auth_form.elements.pass.on( 'blur', function () {
         self.remove_state( self.STATE.LOGIN_FORM_PASS_ACTIVE );
       } );
 
 
       // rem_form
-      this.rem_form.addFunctionToTrigger( 'wud.visible.show', function () {
+      this.rem_form.on( 'visible.show', function () {
         self.add_state( self.STATE.SHOWN_REM_FORM );
       } );
 
-      this.rem_form.addFunctionToTrigger( 'wud.visible.hide', function () {
+      this.rem_form.on( 'visible.hide', function () {
         self.remove_state( self.STATE.SHOWN_REM_FORM );
       } );
 
-      this.rem_form.elements.email.addFunctionToTrigger( 'form_element.focus', function () {
+      this.rem_form.elements.email.on( 'focus', function () {
         self.add_state( self.STATE.REM_FORM_EMAIL_ACTIVE );
       } );
 
-      this.rem_form.elements.email.addFunctionToTrigger( 'form_element.blur', function () {
+      this.rem_form.elements.email.on( 'blur', function () {
         self.remove_state( self.STATE.REM_FORM_EMAIL_ACTIVE );
       } );
 
       // reg_form
-      this.reg_form.addFunctionToTrigger( 'wud.visible.show', function () {
+      this.reg_form.on( 'visible.show', function () {
         self.add_state( self.STATE.SHOWN_REG_FORM );
       } );
 
-      this.reg_form.addFunctionToTrigger( 'wud.visible.hide', function () {
+      this.reg_form.on( 'visible.hide', function () {
         self.remove_state( self.STATE.SHOWN_REG_FORM );
       } );
 
 
       // popups
-      this.popups.addFunctionToTrigger( 'wud.visible.show', function () {
+      this.popups.on( 'visible.show', function () {
         self.add_state( self.STATE.SHOWN_POPUP );
       } );
 
-      this.popups.addFunctionToTrigger( 'wud.visible.hide', function () {
+      this.popups.on( 'visible.hide', function () {
         self.remove_state( self.STATE.SHOWN_POPUP );
         self.remove_state( self.STATE.SHOWN_POPUP_HAS_MANY_MESSAGES );
       } );
 
-      this.popups.addFunctionToTrigger( 'popups.fill', function ( messages ) {
+      this.popups.on( 'fill', function ( messages ) {
         self[ messages.length > 1 ? 'add_state' : 'remove_state' ]( self.STATE.SHOWN_POPUP_HAS_MANY_MESSAGES );
       } );
 
-//      var showState = function () {
-//        self.log( 'Page state: ', self.state, 'i' );
-//      };
-//
-//      this.addFunctionToTrigger( 'page.state.add_state',    showState );
-//      this.addFunctionToTrigger( 'page.state.remove_state', showState );
+      PopupWindow.on( 'show', function () {
+        self.add_state( self.STATE.SHOWN_POPUP_WINDOW );
+      } );
+
+      PopupWindow.on( 'hide', function () {
+        self.remove_state( self.STATE.SHOWN_POPUP_WINDOW );
+      } );
 
       with ( this.STATE )
       this.add_state( this.failed_registration ? SHOWN_REG_FORM : SHOWN_LOGIN_FORM | LOGIN_FORM_EMAIL_ACTIVE );

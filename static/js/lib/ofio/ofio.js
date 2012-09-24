@@ -120,60 +120,65 @@
 
     if ( typeof params.extend == "function" ) {           // если будем наследовать
 
-      extend.prototype  = params.extend.prototype;        // задаем прототип классу от которого будем наследовать
+      extend.prototype        = params.extend.prototype;    // задаем прототип классу от которого будем наследовать
                                                           // равный прототипу базового класса, переданного в параметрах
                                                           // все это надо чтобы не выполнялся конструктор настоящего
                                                           // базового класса
-      new_class         = new extend;                     // создаем экземпляр класса без конструктора
+      new_class               = new extend;                 // создаем экземпляр класса без конструктора
+      new_class.__className   = className;                  // меняем classname у нового класса
+      new_class.__constructor = window[ className ];
 
-      if ( !( new_class.__ofio ) ) {                      // если базовый класс был создан не при помощи ofio
-        var old_init  = new_class.init;                   // нужно аккуратно обойтись с методом init
-        var ofio      = this;
+      var old__ofio = new_class.__ofio;
+      new_class.__ofio = {
+        modules     : {},
+        namespaces  : old__ofio.namespaces.slice(0),
+        ignoreNulls : old__ofio.ignoreNulls.slice(0).concat( params.ignoreNulls || [] )
+      };
 
-        new_class.init = function ( params, class_init_args ) {
-          ofio.init.call( this, params );
-          if ( typeof old_init == 'function' ) {
-            class_init_args = class_init_args || [];
-            old_init.apply( this, class_init_args );
-          }
-        }
-
-        Ofio.it.call( new_class, className );             // а также добавить методы и свойства присущие классам
-      } else {                                            // созданным при помощи ofio
-        new_class.__className = className;                // иначе просто меняем classname у нового класса
+      for ( var module_name in old__ofio.modules ) {
+        var module = old__ofio.modules[ module_name ];
+        new_class.__ofio.modules[ module_name ] = module;
+        module.OnInclude().call( new_class, new_class.__constructor );
       }
+
 
       new_class.extend = extend.prototype;                // создаем ссылку на базовый класс
     } else {
       new_class = this;                                   // если нет наследования, то в качестве базового класса
-      Ofio.it.call( new_class, className );               // вполне сойдет Ofio
+      Ofio.it.call( new_class, className, params.ignoreNulls );
     }
 
                                                           // проверяем не указано ли неправильное имя класса
                                                           // это может возникнуть из-за синтаксической ошибки или
                                                           // например после рафакторинга
-    if ( typeof window[ new_class.__className ] != 'function' )
+    if ( typeof new_class.__constructor != 'function' )
       log( 'wrong className ' + new_class.__className );
+
+    if ( params.feature_modules ) for ( var m = 0, m_ln = params.feature_modules.length; m < m_ln; m++ ) 
+      if ( Ofio.modules[ params.feature_modules[ m ] ] ) params.modules.push( params.feature_modules[ m ] );
 
                                                           // выполняем подключение всех модулей к классу
     includeModules.call( new_class, params.modules || [] );
     return new_class;
-  };
+  }
 
   /*
     функция добавляет стандартные методы и свойства Ofio создаваемому классу
    */
-  Ofio.it = function ( className ) {
+  Ofio.it = function ( className, ignoreNulls ) {
     this.__ofio = {                                       // единственный объект который пишется в прототип класса
 
       modules         : {},                               // сюда будут записываться модули подключенный к классу
                                                           // в виде { 'имя модуля' : ссылка на модуль }
 
-      namespaces      : []                                // массив пространств имен для подключаемых модулей, имеет
+      namespaces      : [],                               // массив пространств имен для подключаемых модулей, имеет
                                                           // вид [ 'название_пространства1', ... ]
+
+      ignoreNulls     : ignoreNulls || []
     };
 
-    this.__className  = className                         // имя создаваемого класса
+    this.__className    = className                         // имя создаваемого класса
+    this.__constructor  = window[ className ];
 
     this.init         = Ofio.prototype.init;
     this.initVars     = function () {};                   // заглушки
@@ -203,6 +208,10 @@
     если в классе или модуле есть своя функция инит она должна иметь вид как показано выше ( строка 29 )
   */
   Ofio.prototype.init = function ( params ) {
+    for ( var module_name in this.__ofio.modules ) {
+      this.__ofio.modules[ module_name ].applyNamespace( this );
+    }
+
     runModulesMethod.call( this, 'initVars' );            // инициализируем переменные из всех модулей
     this.initVars();                                      // инициализируем переменные самого класса
     initParametrs.call( this, params );                   // присваиваем инициализационные параметры
@@ -258,7 +267,7 @@
     var moduleContent = module.Content();
     var namespace     = module.namespace;                                 // определяем пространство имен модуля
     if ( namespace && !this[ namespace ] ) {
-      this[ namespace ] = {};                                             // и создаем его если его нет
+      //this[ namespace ] = {};                                             // и создаем его если его нет
       this.__ofio.namespaces.push( namespace );                           // запоминаем существование этого
                                                                           // пространства в параметрах класса
     }
@@ -269,15 +278,11 @@
       var method = moduleContent[ methodName ];
       if ( !method ) continue;
 
-      if ( namespace ) {                                                  // либо добавить к пространству имен
-        this[ namespace ][ methodName ] = method;
-        this[ namespace ][ methodName ].namespace = this[ namespace ];
-      } else
+      if ( !namespace )                                                   // либо добавить к пространству имен
         this[ methodName ] = method;                                      // либо добавить в сам класс
     }
 
-    var clazz = window[ this.__className ];                               // вызываем функцию модуля OnInclude
-    module.OnInclude().call( this, clazz );
+    module.OnInclude().call( this, this.__constructor );                               // context == prototype
   };
 
 
@@ -357,6 +362,7 @@
         
         if (                                                                    // если переменная осталась null
           namespace[ variable ] === null &&                                     // вызываем для нее redefineVars
+          $.inArray( variable, this.__ofio.ignoreNulls ) == -1 &&
           !runModulesMethod.call( this, 'redefineVars', [ variable ] ) &&       // и если его нет или он вернул
           !this.redefineVars( variable )                                        // false то выдаем предупреждение
         ) log( variable + ( namespace_name == 'this' ? '' : ' in ' + namespace_name + " name space" ) + " is null" );
@@ -389,11 +395,15 @@
     this.namespace    = '';                                   // пространство имен модуля
     this.onInclude    = function () {};                       // функция которая должна выполниться во время
                                                               // подключения модуля
+    this.namespace_constructor = function( link_to_class ) {
+      this.Class = link_to_class;
+    };
   };
 
 
   Module.prototype.init = function ( params ) {
     this.constructor.prototype.init.call( this, params );
+    if ( this.namespace ) this.namespace_constructor.prototype = this.module;
     this.constructor.addModule( this );                       // при инициализации добавляем его к списку
                                                               // существующих модулей
   };
@@ -408,6 +418,11 @@
 
   Module.prototype.OnInclude = function () {
     return typeof this.onInclude == "function" ? this.onInclude : function () {};
+  };
+
+
+  Module.prototype.applyNamespace = function ( obj ) {
+    if ( this.namespace && !obj[ this.namespace ] ) obj[ this.namespace ] = new this.namespace_constructor( obj );
   };
 
 

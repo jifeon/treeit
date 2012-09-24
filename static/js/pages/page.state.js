@@ -3,7 +3,7 @@
   var name        = 'page.state';
   var dependences = [
     'ofio.utils',
-    'ofio.triggers'
+    'ofio.event_emitter'
   ];
 
   var module = new function () {
@@ -21,13 +21,13 @@
 
     this.add_state = function ( state ) {
       this.state = this.state | this.utils.toInt( state );
-      this.runTrigger( 'page.state.add_state', [ state ] );
+      this.emit( 'add_state', state );
     };
 
 
     this.remove_state = function ( state ) {
       this.state = this.state & ~this.utils.toInt( state );
-      this.runTrigger( 'page.state.remove_state', [ state ] );
+      this.emit( 'remove_state', state );
     };
 
 

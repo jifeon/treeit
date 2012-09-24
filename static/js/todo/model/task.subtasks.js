@@ -36,17 +36,23 @@
       params.level  = this.level + 1;
 
       var task = new Task( params );
-      var res = prev ? this.subtasks.insert_after( task, prev ) : this.subtasks.add( task );
+      var res = prev ? this.subtasks.insert_after( task, prev ) : this.add_subtask( task );
       if ( Error.is( res ) ) res.log();
 
       this.check_done();
 
-      this.runTrigger( 'task.create_subtask', [ task ] );
+      this.emit( 'create_subtask', task );
       return task;
     };
 
 
-    this.add_subtask = function ( task, prev, next ) {
+    this.add_subtask = function( task ) {
+      this.subtasks.add( task );
+      this.emit( 'add_subtask', task );
+    };
+
+
+    this.add_unsorted_subtask = function ( task, prev, next ) {
       this.unsorted_subtasks[ task.id ] = {
         task : task,
         prev : prev,
@@ -94,13 +100,14 @@
         if ( prev && this.unsorted_subtasks[ prev.id ] )
           this.append_subtask( this.unsorted_subtasks[ prev.id ], true, false );
         this.current_queue.add( task );
-        this.runTrigger( 'task.add_subtask', [ task ] );
+        this.emit( 'append_subtask', task );
       }
 
       if ( add_next ) {
         if ( !add_prev ) {
           this.current_queue.add( task );
-          this.runTrigger( 'task.add_subtask', [ task ] );
+          this.emit( '' +
+            '', task );
         }
         if ( next && this.unsorted_subtasks[ next.id ] )
           this.append_subtask( this.unsorted_subtasks[ next.id ], false, true );
@@ -118,27 +125,17 @@
     };
 
 
-    this.has_visible_subtasks = function () {
-      return this.has_subtasks() && !this.get_ex_param( 'collapsed' );
-    };
-
-
-    this.get_absolute_last_task = function () {
-      return this.has_visible_subtasks() ? this.subtasks.get_last().get_absolute_last_task() : this;
-    };
-
-
-    this.remove_task = function ( task ) {
-      task.runTrigger( 'task.before_remove' );
+    this.remove_subtask = function ( task ) {
+      task.emit( 'before_remove' );
       this.subtasks.remove( task );
 
       task.post_remove();
-      this.runTrigger( 'task.remove_task' );
+      this.emit( 'remove_subtask' );
     };
 
 
     this.remove = function () {
-      if ( this.parent ) this.parent.remove_task( this );
+      if ( this.parent ) this.parent.remove_subtask( this );
       else this.post_remove();
     };
 
@@ -150,7 +147,7 @@
         this.post_remove();
       });
 
-      this.runTrigger( 'task.remove' );
+      this.emit( 'remove' );
     };
 
 
@@ -179,7 +176,7 @@
       } );
 
       for ( var t = 0, t_ln = to_remove.length; t < t_ln; t++ ) {
-        self.remove_task( to_remove[ t ] );
+        self.remove_subtask( to_remove[ t ] );
       }
     };
   };

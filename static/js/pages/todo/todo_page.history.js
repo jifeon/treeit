@@ -2,7 +2,7 @@
 
   var name        = 'todo_page.history';
   var dependences = [
-    'ofio.triggers'
+    'ofio.event_emitter'
   ];
 
   var module = new function () {
@@ -14,7 +14,7 @@
 
       var self = this;
 
-      this.addFunctionToGlobalTrigger( 'task.create', function () {
+      Task.on( 'create', function () {
         self.add_action({
           params    : this.get_params(),
           operation : Action.create,
@@ -22,7 +22,7 @@
         });
       } );
 
-      this.addFunctionToGlobalTrigger( 'task.remove', function () {
+      Task.on( 'remove', function () {
         self.add_action({
           operation : Action.remove,
           obj       : this
@@ -37,14 +37,14 @@
         });
       };
 
-      this.addFunctionToGlobalTrigger( 'task.set_text',     update );
-      this.addFunctionToGlobalTrigger( 'task.set_done',     update );
-      this.addFunctionToGlobalTrigger( 'task.set_ex_param', update );
-      this.addFunctionToGlobalTrigger( 'task.set_next',     update );
-      this.addFunctionToGlobalTrigger( 'task.set_prev',     update );
-      this.addFunctionToGlobalTrigger( 'task.set_parent',   update );
+      Task.on( 'set_text',     update );
+      Task.on( 'set_done',     update );
+      Task.on( 'set_ex_param', update );
+      Task.on( 'set_next',     update );
+      Task.on( 'set_prev',     update );
+      Task.on( 'set_parent',   update );
 
-      this.addFunctionToTrigger( 'page.before_close', function () {
+      this.on( 'before_close', function () {
         var view = this.get_focused_view();
         view.save_title();
       } );

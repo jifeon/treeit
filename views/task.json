@@ -1,0 +1,16 @@
+{ "Task" : {
+  {#user.tasks}
+  "{id}" : {
+    "serv_id"   : {id},
+    "text"      :"{text}",
+    "done"      : {done},
+    "prev_id"   : {?prev_id}{prev_id}{:else}null{/prev_id},
+    "next_id"   : {?next_id}{next_id}{:else}null{/next_id},
+    "parent_id" : {client_parent_id|s},
+    "ex_params" : "{?ex_params}{ex_params}{:else}{}{/ex_params}"
+  }{@sep},{/sep}{/user.tasks}
+
+}}
+
+
+

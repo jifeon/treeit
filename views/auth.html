@@ -1,0 +1,180 @@
+{>"main.html"/}
+
+{<content}
+<link rel="stylesheet" href="/css/reset.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/forms.css">
+<link rel="stylesheet" href="/css/blocks.css">
+<link rel="stylesheet" href="/css/switch.css">
+<link rel="stylesheet" href="/css/todo.css">
+  
+<script type="text/javascript" src="js/lib/jquery.hotkeys.js"></script>
+<script type="text/javascript" src="js/lib/ofio/ofio.js"></script>
+
+<script type="text/javascript" src="js/lib/wud/wud.jquery.js"></script>
+<script type="text/javascript" src="js/lib/wud/wud.visible.js"></script>
+<script type="text/javascript" src="js/lib/wud/wud.animate.js"></script>
+
+<script type="text/javascript" src="js/lib/ofio/ofio.logger.js"></script>
+<script type="text/javascript" src="js/lib/ofio/ofio.event_emitter.js"></script>
+<script type="text/javascript" src="js/lib/ofio/ofio.utils.js"></script>
+
+<script type="text/javascript" src="js/lib/forms/form_element.js"></script>
+<script type="text/javascript" src="js/lib/forms/form_element.checks.js"></script>
+<script type="text/javascript" src="js/lib/forms/form.js"></script>
+<script type="text/javascript" src="js/lib/forms/text.js"></script>
+<script type="text/javascript" src="js/lib/forms/form_checkbox.js"></script>
+
+<script type="text/javascript" src="js/lib/tools/popups.js"></script>
+<script type="text/javascript" src="js/lib/tools/hotkeys_panel.js"></script>
+<script type="text/javascript" src="js/lib/tools/switch/switch.js"></script>
+<script type="text/javascript" src="js/lib/tools/switch/switch_item.js"></script>
+<script type="text/javascript" src="js/lib/tools/popup_window.js"></script>
+
+<script type="text/javascript" src="js/pages/page.state.js"></script>
+<script type="text/javascript" src="js/pages/page.hotkeys.js"></script>
+
+<script type="text/javascript" src="js/pages/auth/auth_page.state.js"></script>
+<script type="text/javascript" src="js/pages/auth/auth_page.hotkeys.js"></script>
+<script type="text/javascript" src="js/pages/auth/auth_page.js"></script>
+
+
+<!--<? $this->renderPartial('help'); ?>-->
+
+<script type="text/javascript">
+  var page = new AuthPage( {
+    messages : [
+      {#messages}
+  {
+    message : '{text}',
+    type    : '{type}'
+  }{@sep},{/sep}
+    {/messages}
+  ],
+  failed_registration : {?failed_registration}'true'{:else}'false'{/failed_registration}
+  } );
+</script>
+
+<!--div id="logo_big"></div-->
+
+<div id="slogan">TreeIT - сервис для мозгового штурма</div>
+
+<div id="main_line">
+  <div class="fill"></div>
+  <div id="auth_content">
+
+    <div id="feature_preview">
+      <div id="feature_preview_switch" class="switch">
+        <div class="switch_chooser"></div>
+      </div>
+
+      <div class="info_block">
+        <div class="slide" id="slide1">
+          <ul class="description">
+            <li>TreeIT позволяет созда- вать блоки на странице, чтобы структурировать Ваши проекты,
+              задачи или мысли.</li>
+            <li>Блоки содержат записи, которые в свою очередь содержат подзаписи и т.д. Таким образом
+              получается древовидная структура.</li>
+          </ul>
+          <div class="image"></div>
+        </div>
+
+        <div class="slide" id="slide2">
+          <ul class="description">
+            <li>Главной идеей сервиса является минимализм. Во время планирования или мозгового штурма сосре- доточиться
+              лучше на задачах, и не отвлекаться на дизайн.</li>
+            <li>Любую запись можно зачеркнуть, это позволяет легко использовать блоки как todo листы.</li>
+            <li>Запись или блок можно свернуть.</li>
+          </ul>
+          <div class="image"></div>
+        </div>
+
+        <div class="slide" id="slide3">
+          <ul class="description">
+            <li>Все элементы управления появляются при наведении мыши, это позволяет оставить записи "чистыми"
+              для просмотра.</li>
+            <li>Запись можно пере- местить на родительский уровень или сделать её блоком, а также наоборот.</li>
+            <li>Блоки выстраиваются на странице, чтобы занять наименьшее пространство.</li>
+          </ul>
+          <div class="image"></div>
+        </div>
+
+        <div class="slide" id="slide4">
+          <ul class="description">
+            <li>Во время планирования не хочется отвлекаться ни на что, даже на мышь. Любители хоткеев
+              смогут сделать любую операцию с клавиатуры.</li>
+            <li>Внизу распологается панель с актуальными сочетаниями клавиш, которая позволит быстрее
+              освоить сервис.</li>
+          </ul>
+          <div class="image"></div>
+        </div>
+
+        <div class="slide" id="slide5">
+          <ul class="description">
+            <li>Базовый функционал сервиса может быть расширен при помощи дополнений,
+              которые периодически появляются в разделе настройки.</li>
+            <li>Дополнения платные, подробную информацию Вы можете найти в разделе <a href="#" class="help_link">помощь</a></li>
+          </ul>
+          <div class="image"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="auth_forms">
+      <div id="login_registration" class="switch">
+        <div class="switch_chooser"></div>
+      </div>
+
+      <form class="info_block" id="registration" method="POST" action="/register">
+        <div class="row">
+          <label for="email_reg">E-mail:</label>
+          <input type="text" id="email_reg" value="{email}"/>
+        </div>
+        <div class="row">
+          <label for="pass_reg">Password:</label>
+          <input type="password" id="pass_reg"/>
+        </div>
+        <div class="row">
+          <label for="pass2_reg">Password:</label>
+          <input type="password" id="pass2_reg"/>
+        </div>
+        <a href="#" id='reg_submit' class="bottom_round_button">Register</a>
+      </form>
+
+      <form class="info_block" id="login" method="POST" action="/login">
+        <div class="row">
+          <label for="email">E-mail:</label>
+          <input type="text" id="email" value='{email}' />
+        </div>
+        <div class="row">
+          <label for="pass">Password:</label>
+          <input type="password" id="pass"/>
+          <a href="#" id="i_forgot" class="hint">Forgot password?</a>
+        </div>
+        <div class="row last">
+          <label class="small right" for="rememberMe">Stay signed in</label>
+          <input type="checkbox" id="rememberMe" checked />
+        </div>
+        <div style="font-size: 8pt;" class="look_here">
+          attention alfa
+        </div>
+        <a href="#" id='login_submit' class="bottom_round_button">Sign in</a>
+      </form>
+
+      <form class="info_block" id="remember" method="POST" action="<?=Yii::app()->createUrl( 'site/remember' );?>">
+        <div class="row">
+          <label for="email_rem">E-mail:</label>
+          <input type="text" id="email_rem"/>
+          <a href="#" id="i_recollect" class="hint">I recollect my password</a>
+        </div>
+        <a href="#" id="remember_submit" class="bottom_round_button">Send</a>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="tree_image"></div>
+<a id="wmimg" href="http://www.megastock.ru/" target="_blank">
+  <!--<img src="../static/images/blue_rus1.gif" alt="www.megastock.ru" border="0">-->
+</a>
+{/content}

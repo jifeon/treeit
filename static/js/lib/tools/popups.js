@@ -16,7 +16,7 @@ Popups.prototype = new Ofio({
     'wud.jquery',
     'wud.visible',
     'ofio.utils',
-    'ofio.triggers'
+    'ofio.event_emitter'
   ],
   className : 'Popups'
 });
@@ -136,7 +136,7 @@ Popups.prototype.fill = function ( animate ) {
   this.elements.current.text( this.current_popup + 1 );
   this.elements.total.text( this.queue.length );
 
-  this.runTrigger( 'popups.fill', [ this.queue ] );
+  this.emit( 'fill', this.queue );
 
   this.show( animate );
 };
@@ -162,6 +162,20 @@ Popups.prototype.close = function () {
 };
 
 
+/**
+ * @param messages [
+ *    {
+ *      type : info|error|warning|wait,
+ *      messsage : '',
+ *      html : '',
+ *      width : popup width
+ *    },
+ *    NUMBER  - look precreate message,
+ *    STRING  - message ( type == info, def. width )
+ * ]
+ * @param switch_to_it
+ * @param animate
+ */
 Popups.prototype.add_messages = function ( messages, switch_to_it, animate ) {
   messages = messages instanceof Array ? messages : [];
   var old_length    = this.queue.length;

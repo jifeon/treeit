@@ -61,14 +61,19 @@
 
 
     this.move_down = function() {
-      if ( !this.next || !this.queue ) return false;
-      this.queue.insert_after( this, this.next );
+      if ( !this.next || !this.queue ) return new Error( 'Next task does not exist or this task is not in queue' );
+      return this.queue.insert_after( this, this.next );
     };
 
 
     this.move_up = function() {
-      if ( !this.prev || !this.queue ) return false;
-      this.queue.insert_before( this, this.prev );
+      if ( !this.prev || !this.queue ) return new Error( 'Prev task does not exist or this task is not in queue' );
+      return this.queue.insert_before( this, this.prev );
+    };
+
+
+    this.remove_queue = function() {
+      this.queue = null;
     };
   };
 

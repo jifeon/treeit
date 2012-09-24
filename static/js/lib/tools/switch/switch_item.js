@@ -25,10 +25,11 @@ SwitchItem.prototype.init = function ( params ) {
 
   this.$.text( this.name );
   this.$.click( function () {
-    if ( self._switch.to_item( self ) && typeof self.callback == 'function' )
-      self.callback();
+    if ( self._switch.to_item( self, true, true )  ) self.fire_event();
   });
 };
 
 
-
+SwitchItem.prototype.fire_event = function () {
+  if ( typeof this.callback == 'function' ) this.callback();
+};

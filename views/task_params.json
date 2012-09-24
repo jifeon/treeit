@@ -1,0 +1,14 @@
+{
+{#}
+"{serv_id}" : {
+    "id"              : {?id}{id}{:else}'null'{/id}},
+    "text"            :"{text}",
+    "done"            : {?done}'true'{:else}'false'{/done},
+    "prev_id"         : {?prev_serv_id}{prev_serv_id}{:else}null{/prev_serv_id},
+    "next_id"         : {?next_serv_id}{next_serv_id}{:else}null{/next_serv_id},
+    "parent_id"       :"{?parent_serv_id}{parent_serv_id}{:else}life{/parent_serv_id}",
+    "serv_id"         : {?serv_id}{serv_id}{:else}null{/serv_id},
+    "ex_params"       :"{ex_params}"
+  }{@sep},{/sep}
+{/}
+}

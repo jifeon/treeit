@@ -8,12 +8,15 @@ function AuthPage ( params ) {
 
 AuthPage.prototype = new Ofio({
   modules   : [
-    'ofio.triggers',
+    'ofio.event_emitter',
     'page.state',
     'auth_page.state',
     'auth_page.hotkeys'
   ],
-  className : 'AuthPage'
+  className : 'AuthPage',
+  ignoreNulls : [
+    'current_slide'
+  ]
 });
 
 
@@ -24,9 +27,12 @@ AuthPage.prototype.initVars = function () {
   this.popups               = {};
   this.messages             = [];
   this.reg_login_switch     = {};
+  this.features_switch      = {};
   this.current_login_form   = 'auth';
   this.current_form         = {};
   this.failed_registration  = false;
+  this.current_slide        = null;
+  this.help_link            = $('.help_link');
 };
 
 
@@ -174,6 +180,13 @@ AuthPage.prototype.to_reg_form = function () {
   this.current_form = this.auth_form;
 };
 
+AuthPage.prototype.to_slide = function ( n ) {
+  if ( this.current_slide ) this.current_slide.hide();
+
+  this.current_slide = $( '#slide' + n );
+  if ( this.current_slide ) this.current_slide.show();
+};
+
 
 AuthPage.prototype.init_switch = function () {
   var self = this;
@@ -198,15 +211,53 @@ AuthPage.prototype.init_switch = function () {
     start_item : this.failed_registration ? 1 : 0
   });
 
-  this.reg_login_switch.$.css({
-    visibility : 'visible'
+  this.features_switch = new Switch({
+    $ : $('#feature_preview_switch'),
+    items : [
+      {
+        name : 'Общий вид',
+        callback : function () {
+          self.to_slide(1);
+        }
+      },
+      {
+        name : 'Как выглядит блок',
+        callback : function () {
+          self.to_slide(2);
+        }
+      },
+      {
+        name : 'Действия',
+        callback : function () {
+          self.to_slide(3);
+        }
+      },
+      {
+        name : 'Горячие клавиши',
+        callback : function () {
+          self.to_slide(4);
+        }
+      },
+      {
+        name : 'Дополнения',
+        callback : function () {
+          self.to_slide(5);
+        }
+      }
+    ],
+    start_item  : this.failed_registration ? 1 : 0,
+    auto_switch : {
+      timeout : 10000
+    }
   });
+
+  this.to_slide( 1 );
 };
 
 
 AuthPage.prototype.init_triggers = function () {
   var self = this;
-  this.addFunctionToGlobalTrigger( 'Form.submit.has_messages', function ( messages ) {
+  Form.on( 'submit.has_messages', function ( messages ) {
     self.popups.add_messages( messages, true );
   } );
 };
@@ -217,7 +268,15 @@ AuthPage.prototype.init_popups = function () {
     $               : $('#popup'),
     queue           : this.messages,
     animationSpeed  : 500
-  })
+  });
+
+  var help_popup = new PopupWindow({
+    $ : $('#help_popup')
+  });
+
+  this.help_link.click( function() {
+    help_popup.show();
+  } );
 };
 
 

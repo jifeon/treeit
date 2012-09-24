@@ -3,7 +3,7 @@
   var dependences = [
     'page.history',
     'ofio.ajax',
-    'ofio.triggers',
+    'ofio.event_emitter',
     'ofio.logger',
     'ofio.json',
     'ofio.utils'
@@ -11,6 +11,7 @@
 
   var auto_save_ms      = 30000;
   var failed_connection = false;
+  var socket = io.connect('http://localhost:8080/treeit');
 
   var on_add_action = function ( action ) {
     if ( this.current_revision_start == null ) this.current_revision_start = action;
@@ -64,7 +65,7 @@
     if ( data == null ) {
       if ( !failed_connection ) this.popups.add_messages([ BAD_CONNECTION_MESSAGE ]);
       failed_connection = true;
-      this.runTrigger( 'page.history_save.complete' );
+      this.emit( 'history_save.complete' );
       return false;
     }
 
@@ -102,7 +103,7 @@
     this.restore_save();
 
     this.save_data = null;
-    this.runTrigger( 'page.history_save.complete' );
+    this.emit( 'history_save.complete' );
   };
 
 
@@ -142,6 +143,7 @@
       this.history_save_url       = null;
       this.last_save_time         = new Date();
       this.save_data              = null;
+      this.show_save_messsage     = true;
 
       BAD_CONNECTION_MESSAGE      = Popups.precreate_message({
         type    : 'warning',
@@ -172,7 +174,7 @@
     this.init = function () {
       var self = this;
 
-      this.addFunctionToTrigger( 'page.history.add_action', on_add_action );
+      this.on( 'history.add_action', on_add_action );
 
       setInterval( function () {
         self.history_save();
@@ -183,7 +185,7 @@
       }
 
       window.onbeforeunload = function () {
-        self.runTrigger( 'page.before_close' );
+        self.emit( 'before_close' );
 
         var show_success_popup = function () {
           self.popups.add_messages( [{
@@ -200,14 +202,22 @@
             }
           ], true, false);
           self.history_save( show_success_popup );
-          return 'У вас есть несохраненные действия. Вы уверены, что хотите покинуть страницу?';
+          return self.show_save_messsage
+            ? 'У вас есть несохраненные действия. Вы уверены, что хотите покинуть страницу?'
+            : undefined;
         }
       }
     };
 
 
     this.history_save = function ( cb ) {
-      this.runTrigger( 'page.history_save.start' );
+
+      socket.on( 'after_history_save', function ( data, messages ) {
+        history_save_complete.call( self, data );
+        if ( typeof cb == "function" ) cb();
+      } );
+
+      this.emit( 'history_save.start' );
       var only_update = Boolean( this.save_data );
 
       this.save_data = collect_actions_to_save.call( this, this.save_data );
@@ -215,16 +225,25 @@
       this.current_revision_start = null;
 
       var self = this;
-      this.ajax( this.history_save_url, {
-        actions   : only_update ? '{ "only_update" : "true" }' : this.json_decode( this.save_data, true, true ),
-        revision  : this.history_revision
-      }, function ( data, messages ) {
-        history_save_complete.call( self, data );
-        if ( typeof cb == "function" ) cb();
-      } );
+      socket.emit( 'message', {
+        action    : 'save_task',
+        params    : {
+          actions   : only_update ? '{ "only_update" : "true" }' : this.json_decode( this.save_data, true, true ),
+          revision  : this.history_revision
+          }
+      });
+
+//      this.ajax( this.history_save_url, {
+//        actions   : only_update ? '{ "only_update" : "true" }' : this.json_decode( this.save_data, true, true ),
+//        revision  : this.history_revision
+//      }, function ( data, messages ) {
+//        history_save_complete.call( self, data );
+//        if ( typeof cb == "function" ) cb();
+//      } );
 
       return only_update;
     };
+
   };
 
   new Ofio.Module ( {

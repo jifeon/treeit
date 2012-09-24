@@ -42,7 +42,7 @@
         var prev    = this.serv_task_index[ task_params.prev_id ];
         var next    = this.serv_task_index[ task_params.next_id ];
 
-        parent.add_subtask( task, prev, next );
+        parent.add_unsorted_subtask( task, prev, next );
       } else tasks_to_remove.push( task );
     }
 

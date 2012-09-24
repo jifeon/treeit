@@ -3,7 +3,7 @@
   var name        = 'ofio.logger';
   var dependences = [];
 
-  var showLog     = false;
+  var showLog     = true;
 
   var module = new function () {
 

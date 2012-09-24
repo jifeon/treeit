@@ -18,6 +18,8 @@ var config = module.exports = {
    */
   base_dir            : require('path').join( __dirname, '..' ),
 
+  default_controller  : 'site',
+  cache_views         : false,
 
   /**
    * Настройки компонента отвечающего за перенаправление запросов и генерацию запросов
@@ -26,7 +28,12 @@ var config = module.exports = {
    */
   router : {
     rules     : {
-      ''                      : 'site.index'
+      ''                      : 'site.index',
+      '/register'             : 'site.register',
+      '/login'                : 'site.login',
+      '/logout'               : 'site.logout',
+
+      '/save_task'             : 'site.save_task'
     }
   },
 
@@ -36,7 +43,7 @@ var config = module.exports = {
    *
    * @type {Array}
    */
-  preload_components : [ 'log_router' ],
+  preload_components : [ 'log_router', 'db' ],
 
   /**
    * Настройка подключаемых компонентов. Здесь указываются как компоненты autodafe, так и пользовательские. Ключами
@@ -46,11 +53,30 @@ var config = module.exports = {
    * @type {Object}
    */
   components : {
+    web_sockets : {
+      port : 8080
+    },
 
     // http сервер
     http                : {
-      port : 3000
+      port : 3000,
+      root_folders    : {
+        js       : 'static/js',
+        css      : 'static/css'
+      }
+
     },
+    //db
+
+    db : {
+      type      : 'mysql',
+      user      : 'root',
+      password  : '',
+      database  : 'treeit',
+      host      : 'localhost'
+    },
+
+    users    : true,
 
     // настройки логгера
     log_router          : {

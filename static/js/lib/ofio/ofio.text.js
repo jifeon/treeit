@@ -25,14 +25,14 @@
         .mouseup(   this.removeSelection );
       $( element )
         .mousedown(function (event) {
-        var sender = event.target || event.srcElement;
-        preventSelectionFlag = !sender.tagName.match( /input|textarea/i );
-      })
+          var sender = event.target || event.srcElement;
+          preventSelectionFlag = !sender.tagName.match( /input|textarea/i );
+        })
         .keydown( function ( event ) {
-        var sender = event.target || event.srcElement;
-        preventSelectionFlag = !sender.tagName.match( /input|textarea/i );
-        if ( preventSelectionFlag ) self.removeSelection();
-      });
+          var sender = event.target || event.srcElement;
+          preventSelectionFlag = !sender.tagName.match( /input|textarea/i );
+          if ( preventSelectionFlag ) self.removeSelection();
+        });
       if ( !$.browser.msie ) element.onselectstart = function () {
         return false;
       };

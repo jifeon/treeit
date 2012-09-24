@@ -15,7 +15,7 @@
   var dependences = [
     'ofio.logger',
     'ofio.utils',
-    'ofio.triggers'
+    'ofio.event_emitter'
   ];
 
   var stopped = false;
@@ -39,7 +39,7 @@
       }
 
       this.history.push( action );
-      this.runTrigger( 'page.history.add_action', [ action ] );
+      this.emit( 'history.add_action', action );
     };
 
 

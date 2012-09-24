@@ -4,11 +4,11 @@ wud.position.limits
 
 author : Balakirev Andrey <balakirev.andrey@gmail.com>
 
-Модуль для управления предельными положениями элемента интрефейса на странице.
+пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-Добавляет свойства:
+пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
 
 Object limits    =  {
                       Number xmin : -Infinity,
@@ -20,7 +20,7 @@ Object limits    =  {
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-Добовляет методы:
+пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ:
 
 
 (g)Object (s)Wud     Limits   ( [ (g|s)Mixed     limits   ] )
@@ -28,22 +28,22 @@ Object limits    =  {
 limits :
 
 1. Object limits  = {
-                      Number xmin : крайняя левая граница,
-                      Number ymin : крайняя верхняя граница,
-                      Number xmax : крайняя правая граница,
-                      Number ymax : крайняя нижняя граница
+                      Number xmin : пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ,
+                      Number ymin : пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ,
+                      Number xmax : пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ,
+                      Number ymax : пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     }
-В такомже формате отдается объект, когда работает getter
+пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ getter
 
 
 2. Boolean limits === true
 
-в таком же формате как в п 1 отдаются пределы самого объекта
+пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅ 1 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Wud     noLimits    ()     - убирает пределы
+Wud     noLimits    ()     - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -52,8 +52,8 @@ Triggers
 
 (s) Limits                     -> changePosition        ( Object current_position )
 
-применение лимитов             <- changePosition        ( Object current_size     )
-применение лимитов             <- Wud.quickSetPosition  ( Object position         )
+пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ             <- changePosition        ( Object current_size     )
+пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ             <- quickSetPosition  ( Object position         )
 
  */
 
@@ -63,7 +63,7 @@ Triggers
   var name        = 'wud.position.limits';
   var dependences = [
     'wud.position',
-    'ofio.triggers',
+    'ofio.event_emitter',
     'ofio.utils',
     'wud.size'
   ];
@@ -86,8 +86,8 @@ Triggers
   var module = new function () {
 
     this.init = function () {
-      this.addFunctionToTrigger( 'changePosition', applyLimits );
-      this.addFunctionToTrigger( 'Wud.quickSetPosition', applyLimits );
+      this.on( 'changePosition', applyLimits );
+      this.on( 'quickSetPosition', applyLimits );
     };
 
 

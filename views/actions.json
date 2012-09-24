@@ -1,0 +1,9 @@
+{
+  "Task" : {
+    "create" : {>"task_params:tamplate_params.create"/},
+    "update" : "",
+    "remove" : [ {#remove}{.}{@sep},{/sep}{/remove} ]
+    },
+    "revision" : {revision},
+    "reinit"   : {?reinit}'true'{:else}'false'{/reinit}
+}

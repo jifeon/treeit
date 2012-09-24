@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="keywords" content="todo списки, планирование, трекинг задач, туду, сервис, мозговой штурм, дерево, древовизация, древовизируйте">
+    <meta content="balakirev.andrey@gmail.com" name="author">
+    <meta content="TreeIT - сервис для мозгового штурма. Древовизация мыслей, задачей и дел." name="description">
+    <meta name="google-site-verification" content="MCBZFrUmYHVWEMY-kYSrs4wbLVNaFjqbHOHRftPt5D0" />
+    <meta name='yandex-verification' content='4fb63769c73609ad' />
+    <meta name="verify-reformal" content="4d23e2384f446a9f2c099cc1" />
+    <meta name="webmoney.attestation.label" CONTENT="webmoney attestation label#1AB3B812-DFE7-4D89-AE44-7D3EAD3371FD" />
+
+    <!--<link rel="icon" type="image/png" href="<?=Yii::app()->request->baseUrl; ?>/static/images/icon.png?v=<?=Yii::app()->params['version']?>" />-->
+
+    <script type="text/javascript" src="/js/lib/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="/SocketIO/socket.io.js"></script>
+
+    <title>Treeit</title>
+</head>
+
+<body>
+<div id="shade"></div>
+<div id="layout">
+    <div id="header">
+        <div id="info">
+            Hi, {?user}{user.login} :)
+            <a id="settings_link" href="#">settings</a>
+            <a id="help" href="#">help</a>
+            <!--<? if ( $admin ) {?>-->
+            <!--<a href="<?=Yii::app()->createUrl('site/admin')?>">admin</a>-->
+            <!--<? } ?>-->
+            <a href="#" id="force_save">save</a><br/>
+            <a href="#" id="force_save_proc">saving...</a>
+            <a class="look_here" href="http://treeit.reformal.ru/" target="_blank">report bug / request feature</a>
+            <a href="/logout">sign out</a>
+            {:else}
+            <a id="help" class="help_link" href="#">help</a>
+            {/user}
+        </div>
+
+        <!--<div id="logo"></div>-->
+        <div id="logo">
+            <a class="no_style" href="http://treeit.ru">TreeIT</a>
+            <sub>древовизируйте на здоровье</sub>
+            {?user}
+            <sub style="color : violet;position: absolute; left : 81px; top : 0;"></sub>
+            {/user}
+        </div>
+        {?user}
+        <div id="header_buttons">
+            <a id="new_list" title="'create new todo tree'" class="top_round_button" href="#">New tree<div class="icon big create"></div></a>
+            <a id="clean_lists" title="'remove all completed tasks'" class="top_round_button" href="#">Clean trees<div class="icon big clean"></div></a>
+        </div>
+        {/user}
+    </div>
+
+    <div id="content">
+      {+content/}
+    </div>
+
+    <div id="footer"></div>
+
+    <div id="popup">
+        <div class="head">
+            <div class="close" title="'hide all messages'"></div>
+            <div class="multi">
+                <span class="arrow_left" title="'previous message'"></span>
+                <span class="current_message"></span>
+                <span>of</span>
+                <span class="total_messages"></span>
+                <span class="arrow_right" title="'next message'"></span>
+            </div>
+        </div>
+        <div class="message"></div>
+        <div class="popup_icon"></div>
+    </div>
+</div>
+<? if ( !$admin ) {?>
+<script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+    try {
+        var pageTracker = _gat._getTracker("UA-2890648-5");
+        pageTracker._trackPageview();
+    } catch(err) {}
+</script>
+<? } ?>
+</body>
+</html>

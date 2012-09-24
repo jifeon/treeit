@@ -15,6 +15,18 @@
 
       this.hotkeys = [
         {
+          elem : document,
+          hk : {
+            'esc'     : {
+              action  : 'esc_key',
+              hint    : function() {
+                return self.check_state( this.STATE.SHOWN_POPUP_WINDOW ) ? 'закрыть окно' : 'отменить перемещение';
+              },
+              state   : [ this.STATE.DRAGNDROP_PROCESSING, this.STATE.SHOWN_POPUP_WINDOW ]
+            }
+          }
+        },
+        {
           elem : document.body,
           hk : {
             'ctrl+b'  : {
@@ -93,20 +105,20 @@
               action  : 'focus_up',
               state   : this.STATE.TODO_BLOCK_FOCUSED
             },
-            'enter' : {
+            'return' : {
               action  : 'enter_key',
               hint    : 'новая задача',
               state   : this.STATE.TODO_BLOCK_FOCUSED
             },
-            'del'   : {
+            'del'   : {                               // перестает работать точка
               action  : 'delete_key',
               state   : this.STATE.TODO_TASK_FOCUSED
             },
             // TODO: вернуть backspace
-//            'backspace'  : {
-//              action  : 'backspace_key',
-//              state   : this.STATE.TODO_TASK_FOCUSED
-//            },
+            'backspace'  : {                          // перестает работать сам бекспэйс
+              action  : 'backspace_key',
+              state   : this.STATE.TODO_TASK_FOCUSED
+            },
             'ctrl+right' : {
               action  : 'next_block',
               hint    : 'следующий блок',
@@ -141,7 +153,7 @@
               hint    : function () {
                 var view = self.get_focused_view();
                 if ( !view || view.model.get_level() <= 2 ) return false;
-                return 'переместить на родительский уровень';
+                return 'на родительский уровень';
               },
               state   : this.STATE.TODO_TASK_FOCUSED
             }
@@ -329,6 +341,12 @@
           view.move_outside();
           return false;
         };
+
+        this.esc_key = function() {
+          if ( self.has_feature( 'dragndrop' ) ) self.feature_dragndrop.stop_drag();
+
+          if ( PopupWindow.current_popup ) PopupWindow.current_popup.hide();
+        };
       };
     };
 
@@ -336,7 +354,7 @@
     this.init = function () {
       var self = this;
 
-      this.addFunctionToTrigger( 'page.keyup', function( hotkey ) {
+      this.on( 'keyup', function( hotkey ) {
         switch ( hotkey ) {
           case 'down':
             if ( self.caret_position == null ) return false;

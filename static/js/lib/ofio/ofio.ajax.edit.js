@@ -125,7 +125,7 @@ Triggers
 
 (s)Top, (s)Left, (s)Position, (s)PositionEvent    -> changePosition        ( Object current_position )
 (s)Bottom, (s)Right                               -> changeSize            ( Object current_size     )
-quickSetPosition                                  -> Wud.quickSetPosition  ( Object position         )
+quickSetPosition                                  -> quickSetPosition  ( Object position         )
 
  */
 

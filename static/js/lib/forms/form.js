@@ -7,7 +7,7 @@ Form.prototype = new Ofio({
   modules : [
     'wud.jquery',
     'wud.visible',
-    'ofio.triggers'
+    'ofio.event_emitter'
   ],
   className : 'Form'
 });
@@ -59,7 +59,7 @@ Form.prototype.set_names = function () {
 Form.prototype.submit = function () {
   var messages = this.validate();
   if ( typeof this.on_validate == 'function' ) Array.prototype.push.apply( messages, this.on_validate.call( this ) );
-  if ( messages.length ) this.runTrigger( 'Form.submit.has_messages', [ messages ] );
+  if ( messages.length ) this.emit( 'submit.has_messages', messages );
   else this.$[0].submit();
 };
 
