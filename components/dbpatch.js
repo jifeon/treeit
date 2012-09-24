@@ -25,9 +25,13 @@ DBPatch.prototype.apply_to_base = function( user ) {
   var emitter = new Emitter;
   var listener = new global.autodafe.lib.Listener({});
 
-  listener.stack <<= this.apply_create_to_base( user );
-  listener.stack <<= this.apply_update_to_base();
-  listener.stack <<= this.apply_remove_to_base();
+  if( !Object.isEmpty( this.create ) )
+    listener.stack <<= this.apply_create_to_base( user );
+  if( !Object.isEmpty( this.update ) )
+    listener.stack <<= this.apply_update_to_base();
+  if( this.remove.length > 0 )
+    listener.stack <<= this.apply_remove_to_base();
+
   listener.success( function(){
     emitter.emit( 'success' );
   })
@@ -40,7 +44,7 @@ DBPatch.prototype.apply_create_to_base = function( user ) {
   var listener = new global.autodafe.lib.Listener({}),
       emitter = new Emitter,
       self = this;
-
+//  if( Object.isEmpty( this.create ) ) return emitter.emit( 'success' );
   for( var task_params in this.create ) {
     var task = new this.app.models.task;
     task.text       = this.create[ task_params ].text;
@@ -107,6 +111,7 @@ DBPatch.prototype.apply_update_to_base = function() {
       emitter  = new Emitter,
       self     = this,
       i_array  = [];
+//  if( Object.isEmpty( this.update ) ) return emitter.emit( 'success' );
   for( var task_params in this.update ) i_array.push( this.update[ task_params ].serv_id );
   listener.stack <<= this.app.models.task.find_all_by_pk( i_array );
   listener.success( function( tasks ){
@@ -132,24 +137,21 @@ DBPatch.prototype.apply_remove_to_base = function() {
   var listener = new global.autodafe.lib.Listener({}),
       emitter  = new Emitter,
       self     = this;
-  if( this.remove.length == 0 ) return emitter.emit( 'success' );
-  this.remove.forEach( function( task ){
-    listener.stack <<= self.app.models.task.recursively_remove( task );
-    listener.success( function(){
+  listener.stack <<= this.app.models.task.remove_all_by_attributes({
+    id : Object.values( this.remove )
+  })
+  listener.success( function(){
       emitter.emit( 'success' )
     } )
-  } )
   return emitter;
 }
 
 DBPatch.prototype.save = function( user ) {
-  var emitter = new Emitter;
-  var listener = new global.autodafe.lib.Listener({});
+  var emitter = new Emitter,
+      listener = new global.autodafe.lib.Listener({}),
+      self = this,
+      revision = new this.app.models.revision;
 
-  if ( this.index_type_is( this.CLIENT ) ) this.set_server_index();
-  if ( Object.isEmpty( this.create ) && Object.isEmpty( this.update ) && this.remove.length == 0 ) return null;
-  var self = this;
-  revision = new this.app.models.revision;
   revision.actions = JSON.stringify( this.to_array() );//serialize( $this->to_array() );
   revision.user_id = user.id;
   listener.stack <<= revision.save();

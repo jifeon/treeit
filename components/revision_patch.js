@@ -10,6 +10,7 @@ function RevisionPatch( params ){
 RevisionPatch.prototype._init = function( params ){
 
   RevisionPatch.parent._init.call( this, params );
+  var self = this;
   if( params && params.revisions )
     params.revisions.forEach( function( revision ){
       var revision_patch = new DBPatch( {
@@ -17,6 +18,6 @@ RevisionPatch.prototype._init = function( params ){
         app     : params.app,
         name    : 'dbpatch'
       } );
-      this._patch( revision_patch );
+      self._patch( revision_patch );
     } )
 }

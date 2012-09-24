@@ -204,14 +204,14 @@ Site.prototype.save_task = function( response, request ){
   listener.stack <<= this.models.user.With('tasks').find_by_pk( ui.model.id );
 
   listener.success( function( user ){
-    listener.stack <<= user.save_actions( client_actions, request.params.revision, response.create_listener() );
-    listener.success( function( template_params ){
-      response.view_name( 'json').send({
-        'errors'          : messages.errors,
-        'template'        : 'actions',
-        'template_params' : template_params
-      }, 'after_history_save' )
-    })
+//    listener.stack <<= user.save_actions( client_actions, request.params.revision, response.create_listener() );
+//    listener.success( function( template_params ){
+      response.view_file_name( 'json.json').send({
+        errors  : messages.errors,
+        action  : 'after_history_save',
+        params  : user.save_actions( client_actions, request.params.revision, response.create_listener() )
+      })
+//    })
   })
 }
 

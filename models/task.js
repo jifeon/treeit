@@ -14,6 +14,12 @@ Task.prototype._init = function( params ){
   this._.client_parent_id.get = function( descripter ){
     return descripter.target.parent_id ? descripter.target.parent_id : "'life'";
   }
+  this._.escape_text = function( text ){
+  }
+
+  this._.escape_ex_params = function( text ){
+  }
+
 }
 
 
@@ -36,13 +42,6 @@ Task.prototype.attributes = function(){
   next_id   : 'safe',
   parent_id : 'safe'
   }
-}
-
-Task.prototype.escape_text = function( text ){
-
-}
-Task.prototype.escape_ex_params = function( text ){
-
 }
 
 Task.prototype.beforeSave = function() {

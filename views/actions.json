@@ -1,9 +1,35 @@
 {
   "Task" : {
-    "create" : {>"task_params:tamplate_params.create"/},
-    "update" : "",
-    "remove" : [ {#remove}{.}{@sep},{/sep}{/remove} ]
+    "create" : {
+      {#params.create}
+      "{serv_id}" : {
+      "id"              : {?id}{id}{:else}null{/id},
+      "text"            :"{text}",
+      "done"            : {?done}true{:else}false{/done},
+      "prev_id"         : {?prev_serv_id}{prev_serv_id}{:else}null{/prev_serv_id},
+      "next_id"         : {?next_serv_id}{next_serv_id}{:else}null{/next_serv_id},
+      "parent_id"       :"{?parent_serv_id}{parent_serv_id}{:else}life{/parent_serv_id}",
+      "serv_id"         : {?serv_id}{serv_id}{:else}null{/serv_id},
+      "ex_params"       :"{ex_params}"
+      }{@sep},{/sep}
+      {/params.create}
+      },
+    "update" : {
+      {#params.create}
+      "{serv_id}" : {
+      "id"              : {?id}{id}{:else}null{/id},
+      "text"            :"{text}",
+      "done"            : {?done}true{:else}false{/done},
+      "prev_id"         : {?prev_serv_id}{prev_serv_id}{:else}null{/prev_serv_id},
+      "next_id"         : {?next_serv_id}{next_serv_id}{:else}null{/next_serv_id},
+      "parent_id"       :"{?parent_serv_id}{parent_serv_id}{:else}life{/parent_serv_id}",
+      "serv_id"         : {?serv_id}{serv_id}{:else}null{/serv_id},
+      "ex_params"       :"{ex_params}"
+      }{@sep},{/sep}
+      {/params.create}
+      },
+    "remove" : [ {#params.remove}{.}{@sep},{/sep}{/params.remove} ]
     },
-    "revision" : {revision},
-    "reinit"   : {?reinit}'true'{:else}'false'{/reinit}
+    "revision" : {params.revision},
+    "reinit"   : {?params.reinit}true{:else}false{/params.reinit}
 }

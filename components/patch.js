@@ -32,8 +32,8 @@ Patch.prototype.index_type_is = function( index_type ) {
 
 Patch.prototype.to_array = function() {
   return {
-    create : this.create,
-    update : this.update,
+    create : Object.values( this.create ),
+    update : Object.values( this.update ),
     remove : this.remove
   }
 }
@@ -110,5 +110,5 @@ Patch.prototype.diff = function( patch ) {
 Patch.prototype.get_task_by_attribute = function( array, attr, value ){
   var tasks = this[ array ];
   for( var task in tasks )
-    if( tasks[ task ][ attr ] == value ) return task;
+    if( tasks[ task ][ attr ] == value ) return tasks[ task ];
 }

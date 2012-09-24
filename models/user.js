@@ -104,7 +104,6 @@ User.prototype.save_actions = function ( client_actions, revision, listener ) {
       self = this,
       emitter = new Emitter;
 
-
   // проверяем актуальна ли ревизия, состояние которо отражено на клиенте. Если это так, то собираем патч деуйствий
   // произошедших за время с последнего обновления, иначе патчем будет создание всех существующих на данный момент
   // тасков
@@ -112,32 +111,17 @@ User.prototype.save_actions = function ( client_actions, revision, listener ) {
   listener.stack <<= this.models.revision.find_by_pk( revision, 'user_id = :user_id', { user_id : this.id })
   listener.success( function( client_revision ){
 
-
     var reinit          = !client_revision;
 
-    emitter.on( 'server_actions', function( server_actions ){
-
-      var server_side_patch = client_actions.diff( server_actions );
-      var db_patch = new DBPatch( { name : 'dbpatch', app : self.app } );
-      db_patch.copy_from( server_side_patch );
-      listener.stack <<= db_patch.apply_to_base( self );
-      listener.success( function(){
-        listener.stack <<= db_patch.save( self );// || 0;//$_GET[ 'revision' ];//$user->revision_id || $_GET[ 'revision' ] || 0;
-        listener.success( function(){
-
-        // в db_patch есть индекс, потому что там было apply_to_base
-
-          db_patch.copy_from( client_actions );
-          var client_side_patch = server_actions.diff( db_patch );
-
-          var template_params = client_side_patch.to_array();
-          template_params.revision = self.revision_id;
-          template_params.reinit   = reinit;
-
-          emitter.emit( 'success', template_params );
-        })
+    emitter.on( 'server_actions', function( server_actions ) {
+      self._server_actions( {
+        sa : server_actions,
+        ca : client_actions,
+        listener : listener,
+        emitter  : emitter,
+        reinit   : reinit
       })
-    })
+    } )
 
     var server_actions;
     if ( reinit ){
@@ -166,4 +150,49 @@ User.prototype.save_actions = function ( client_actions, revision, listener ) {
 
   })
   return emitter;
+}
+
+User.prototype._server_actions = function ( params ) {
+  var self = this;
+
+  var server_side_patch = params.ca.diff( params.sa );
+  var db_patch = new DBPatch( { name : 'dbpatch', app : self.app } );
+  db_patch.copy_from( server_side_patch );
+  params.db_patch = db_patch;
+
+  if ( Object.isEmpty( db_patch.create ) && Object.isEmpty( db_patch.update ) && db_patch.remove.length == 0 )
+    self._save( params );
+  else {
+    params.listener.stack <<= db_patch.apply_to_base( self );
+    params.listener.success( function(){
+      self._save( params );
+    })
+  }
+}
+
+User.prototype._save = function ( params ) {
+  var self = this;
+
+  if ( params.db_patch.index_type_is( params.db_patch.CLIENT ) ) params.db_patch.set_server_index();
+  if ( Object.isEmpty( params.db_patch.create ) && Object.isEmpty( params.db_patch.update ) && params.db_patch.remove.length == 0 )
+    this._get_template_params( params );
+  else{
+    params.listener.stack <<= params.db_patch.save( self );// || 0;//$_GET[ 'revision' ];//$user->revision_id || $_GET[ 'revision' ] || 0;
+    params.listener.success( function(){
+      self._get_template_params( params );
+  })
+  }
+}
+
+User.prototype._get_template_params = function ( params ) {
+  // в db_patch есть индекс, потому что там было apply_to_base
+
+  params.db_patch.copy_from( params.ca );
+  var client_side_patch = params.sa.diff( params.db_patch );
+
+  var template_params = client_side_patch.to_array();
+  template_params.revision = this.revision_id;
+  template_params.reinit   = params.reinit;
+
+  params.emitter.emit( 'success', template_params );
 }
