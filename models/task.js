@@ -1,5 +1,4 @@
 var ActiveRecord = global.autodafe.db.ActiveRecord;
-var Emitter      = process.EventEmitter;
 
 module.exports = Task.inherits( ActiveRecord );
 
@@ -14,14 +13,20 @@ Task.prototype._init = function( params ){
   this._.client_parent_id.get = function( descripter ){
     return descripter.target.parent_id ? descripter.target.parent_id : "'life'";
   }
-  this._.escape_text = function( text ){
+  this._.escape_text.get = function( text ){
   }
 
-  this._.escape_ex_params = function( text ){
-  }
+//  this._.client_ex_params.get = function( descripter ){
+//    var r = descripter.target.ex_params ?
+//      descripter.target.ex_params.replace( '&quot;', '/&quot;' ) : '{}';
+//    return r;
+//  }
 
 }
-
+//Task.prototype.get_ex_params = function(){
+//  return this.ex_params ?
+//    this.ex_params.replace( '/[^A-z0-9:"{}.]/', '' ) : '{}';
+//}
 
 Task.prototype.get_table_name = function(){
   return 'task';
@@ -56,34 +61,34 @@ Task.prototype.beforeSave = function() {
 
 
 
-Task.prototype.recursively_remove = function( id ) {
-  var listener = new global.autodafe.lib.Listener({}),
-      trash = [],
-      emitter = new Emitter,
-      self = this;
-  emitter
-  .on( 'not_end', function( ar ){
-    trash = trash.concat( ar );
-    //listener.stack <<= self.find_all( ' `parent_id` IN ('+ ar.join(',') + ')') ;
-    listener.stack <<= self.find_all_by_attributes({
-      parent_id : ar
-    }) ;
-    listener.success( function( tasks ){
-      if( tasks.length > 0 ){
-        var ar = [];
-        tasks.forEach( function( task ) { ar.push( task.id ) } )
-        emitter.emit( 'not_end', ar );
-      } else emitter.emit( 'end' )
-    })
-  })
-  .on( 'end', function(){
-      listener.stack <<= self.remove_all_by_attributes( {
-        id : trash
-      } );
-      listener.success( function(){
-        emitter.emit( 'success' );
-      })
-    })
-  emitter.emit( 'not_end', [ id ] );
-  return emitter;
-};
+//Task.prototype.recursively_remove = function( id ) {
+//  var listener = new global.autodafe.lib.Listener({}),
+//      trash = [],
+//      emitter = new Emitter,
+//      self = this;
+//  emitter
+//  .on( 'not_end', function( ar ){
+//    trash = trash.concat( ar );
+//    //listener.stack <<= self.find_all( ' `parent_id` IN ('+ ar.join(',') + ')') ;
+//    listener.stack <<= self.find_all_by_attributes({
+//      parent_id : ar
+//    }) ;
+//    listener.success( function( tasks ){
+//      if( tasks.length > 0 ){
+//        var ar = [];
+//        tasks.forEach( function( task ) { ar.push( task.id ) } )
+//        emitter.emit( 'not_end', ar );
+//      } else emitter.emit( 'end' )
+//    })
+//  })
+//  .on( 'end', function(){
+//      listener.stack <<= self.remove_all_by_attributes( {
+//        id : trash
+//      } );
+//      listener.success( function(){
+//        emitter.emit( 'success' );
+//      })
+//    })
+//  emitter.emit( 'not_end', [ id ] );
+//  return emitter;
+//};

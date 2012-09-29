@@ -17,14 +17,14 @@ Site.prototype.validation_error = function( response, request, errors ){
 }
 
 
-Site.prototype.global_view_params = function( response, request ){
-
-  var ui = this.app.users.get_by_client( request.client );
-
-  return {
-    user : ui && ui.model
-  }
-};
+//Site.prototype.global_view_params = function( response, request ){
+//
+//  var ui = this.app.users.get_by_client( request.client );
+//
+//  return {
+//    user : ui && ui.model
+//  }
+//};
 
 Site.prototype.connect_client = function ( client ){
 
@@ -204,14 +204,11 @@ Site.prototype.save_task = function( response, request ){
   listener.stack <<= this.models.user.With('tasks').find_by_pk( ui.model.id );
 
   listener.success( function( user ){
-//    listener.stack <<= user.save_actions( client_actions, request.params.revision, response.create_listener() );
-//    listener.success( function( template_params ){
-      response.view_file_name( 'json.json').send({
-        errors  : messages.errors,
-        action  : 'after_history_save',
-        params  : user.save_actions( client_actions, request.params.revision, response.create_listener() )
-      })
-//    })
+    response.view_file_name( 'json.json').send({
+      errors  : messages.errors,
+      action  : 'after_history_save',
+      params  : user.save_actions( client_actions, request.params.revision, response.create_listener() )
+    })
   })
 }
 

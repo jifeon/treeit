@@ -1,0 +1,133 @@
+#slogan {
+  width            : 1024px;
+  margin           : 20px auto;
+  font-size        : 20pt;
+  font-weight      : bold;
+  text-align       : center;
+  position         : relative;
+  z-index          : 10;
+}
+
+#main_line {
+  border-bottom    : 1px solid #cadafd;
+  border-top       : 1px solid #cadafd;
+  position         : relative;
+  z-index          : 3;
+  min-width        : 1024px;
+  margin-bottom    : 320px;
+}
+
+#main_line .fill {
+  background-color : #f4f7fd;
+  width            : 100%;
+  height           : 100%;
+  position         : absolute;
+  opacity          : 0.5;
+  filter           : progid:DXImageTransform.Microsoft.Alpha(opacity = 50);
+}
+
+#auth_content {
+  width            : 1024px;
+  margin           : auto;
+  height           : 480px;
+  position         : relative;
+}
+
+#auth_content .slide {
+  display          : none;
+}
+
+#auth_content .slide .description {
+  width            : 190px;
+  float            : left;
+  margin           : 0 10px;
+  font-size        : 9pt;
+  line-height      : 14pt;
+}
+
+#auth_content .slide .description li {
+  list-style       : circle;
+  margin-top       : 10px;
+  text-indent      : 15px;
+  text-align       : justify;
+}
+
+#auth_content .slide .image {
+  width            : 396px;
+  height           : 304px;
+  border           : 1px solid #cadafd;
+  margin-left      : 210px;
+}
+
+#auth_content #slide1 .image {
+  background-image : url('images/all_view.png');
+}
+
+#auth_content #slide2 .image {
+  background-image : url('images/list_view.png');
+}
+
+#auth_content #slide3 .image {
+  background-image : url('images/list_view2.png');
+}
+
+#auth_content #slide4 .image {
+  background-image : url('images/hotkeys_view.png');
+}
+
+#auth_content #slide5 .image {
+  background-image : url('images/plugins.png');
+}
+
+#feature_preview {
+  float            : left;
+  width            : 650px;
+  border-right     : 2px dashed #cadafd;
+  padding-right    : 10px;
+  height           : 100%;
+  margin-left      : 5px;
+}
+
+#auth_forms {
+  width            : 342px;
+  position         : relative;
+  float            : left;
+  padding-left     : 10px;
+}
+
+#remember.info_block,
+#registration.info_block,
+#login.info_block {
+  display          : none;
+  width            : 300px;
+  padding          : 30px 20px 10px;
+}
+
+#remember.info_block .bottom_round_button,
+#registration.info_block .bottom_round_button,
+#login.info_block .bottom_round_button {
+  left                  : 100px;
+}
+
+#login_registration.switch,
+#feature_preview_switch.switch {
+  margin           : 30px auto;
+}
+
+#tree_image {
+  background-image : url('images/tree.png');
+  width            : 397px;
+  height           : 352px;
+  position         : fixed;
+  bottom           : 0;
+  left             : 50px;
+}
+
+
+#wmimg {
+  position         : absolute;
+  right            : 30px;
+  bottom           : 50px;
+  display          : block;
+  z-index          : 5;
+}

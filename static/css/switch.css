@@ -1,0 +1,32 @@
+.switch {
+  height                : 26px;
+  font-size             : 10pt;
+  -moz-border-radius    : 10px;
+  -webkit-border-radius : 10px;
+  border-radius         : 10px;
+  background-color      : #f4f7fd;
+  border                : 1px solid #cadafd;
+  position              : relative;
+  float                 : left;
+  visibility            : hidden;
+}
+
+.switch .switch_item {
+  float                 : left;
+  padding               : 5px 8px;
+  z-index               : 1;
+  position              : relative;
+  cursor                : pointer;
+}
+
+.switch .switch_chooser {
+  width                 : 35px;
+  height                : 20px;
+  position              : absolute;
+  top                   : 2px;
+  -moz-border-radius    : 7px;
+  -webkit-border-radius : 7px;
+  border-radius         : 7px;
+  background-color      : #e1eaff;
+  border                : 1px solid #cadafd;
+}

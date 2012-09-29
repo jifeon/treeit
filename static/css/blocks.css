@@ -1,0 +1,480 @@
+.block {
+  -moz-border-radius                 : 20px;
+  -webkit-border-radius              : 20px;
+  border-radius                      : 20px;
+  background-color                   : #e1eaff;
+  border                             : 1px solid #b3caff;
+  width                              : 282px;
+  min-height                         : 290px;
+  padding                            : 0 4px 4px;
+  position                           : absolute;
+}
+
+.block.focused,
+.dragndrop.dragndrop_processing .block:hover,
+.dragndrop.dragndrop_processing .block.hover{
+  border-width: 2px;
+  border-color                       : #85aaff;
+  margin-top                         : -1px;
+  margin-left                        : -1px;
+}
+
+.dragndrop.dragndrop_processing .block:hover,
+.dragndrop.dragndrop_processing .block.hover{
+  border-color                       : #ee8d02;
+}
+
+#sample_block {
+  display                            : none;
+}
+
+.block.done {
+  background-color                   : #e1e1e1;
+  border-color                       : #b3b3b3;
+}
+
+.block.collapsed {
+  min-height                         : 44px;
+}
+
+.block input, .block textarea {
+  background-color                   : transparent;
+  border                             : 0;
+  padding                            : 0;
+  resize:none;
+  line-height                        : 17px;
+}
+
+.block.done input, .block.done textarea {
+  color                              : gray;
+}
+
+/*** block head ***/
+
+.block .head {
+  padding-top                        : 14px;
+  position                           : relative;
+  height                             : 29px;
+  margin-bottom                      : 4px;
+}
+
+.block.collapsed .head {
+  height                             : 23px;
+  margin-bottom                      : 0;
+}
+
+.block .head input {
+  font-size                          : 13pt;
+  width                              : 236px;
+  font-weight                        : bold;
+  height                             : 20px;
+}
+
+.block.done .head input {
+  text-decoration                    : line-through;
+}
+
+.block:hover .head input {
+  width                              : 195px;
+}
+
+.block .head .icon {
+  position                           : absolute;
+  right                              : 10px;
+  visibility                         : hidden;
+}
+
+.block:hover .head .icon {
+  visibility                         : visible;
+}
+
+.block.collapsed .head .icon.clean,
+.block.collapsed .head .icon.create,
+.block.collapsed .head .icon.drag {
+  visibility                         : hidden;
+}
+
+.block.collapsed .head .icon.create {
+  visibility                         : hidden;
+}
+
+.block .head .icon.clean {
+  top                                : 5px;
+}
+
+.block .head .icon.remove {
+  top                                : 18px;
+}
+
+.block .head .icon.create {
+  top                                : 31px;
+}
+
+.block .head .icon.drag {
+  right                              : 30px;
+  top                                : 18px;
+}
+
+.block .head .expander {
+  width                              : 32px;
+  height                             : 12px;
+  -moz-border-radius-bottomleft      : 10px;
+  -moz-border-radius-bottomright     : 10px;
+  -webkit-border-bottom-left-radius  : 10px;
+  -webkit-border-bottom-right-radius : 10px;
+  border-bottom-left-radius  : 10px;
+  border-bottom-right-radius : 10px;
+  background-color                   : #e1eaff;
+  border                             : 1px solid #b3caff;
+  border-top                         : 0;
+  position                           : absolute;
+  top                                : 0;
+  right                              : 36px;
+  cursor                             : pointer;
+  visibility                         : hidden;
+}
+
+.block.done .head .expander {
+  background-color                   : #e1e1e1;
+  border-color                       : #b3b3b3;
+}
+
+.block:hover .head .expander,
+.block.collapsed .head .expander {
+  visibility                         : visible;
+}
+
+.block .head .expander div {
+  width                              : 14px;
+  height                             : 3px;
+  background-color                   : #b3caff;
+  margin                             : 4px 0 0 9px;
+}
+
+.block.done .head .expander div {
+  background-color                   : #b3b3b3;
+}
+
+.block.collapsed .head .expander div {
+  width                              : 10px;
+  height                             : 1px;
+  background-color                   : #e1eaff;
+  border                             : 2px solid #b3caff;
+  margin                             : 3px 0 0 9px;
+}
+
+.block.done.collapsed .head .expander div {
+  background-color                   : #e1e1e1;
+  border-color                       : #b3b3b3;
+}
+
+/*** block tasks ***/
+
+.block .tasks {
+  display                            : block;
+  margin                             : 0;
+  padding                            : 0;
+  list-style                         : none;
+  border                             : 1px solid #b3caff;
+  border-bottom                      : 0;
+  background-color                   : #f5f8ff;
+  min-height                         : 228px;
+}
+
+.block.collapsed .tasks {
+  display                            : none;
+}
+
+.block .task {
+  position                           : relative;
+  display                            : block;
+}
+
+.block .task.dragged {
+  opacity                            : 0.5;
+}
+
+#content .block .task.dragged * {
+  cursor                             : no-drop !important;
+  cursor                             : not-allowed !important;
+}
+
+#sample_task {
+  display                            : none;
+}
+
+.block .task .branch {
+  width                              : 18px;
+  display                            : none;
+  position                           : absolute;
+  left                               : -18px;
+  height                             : 19px;
+}
+
+.block .sub_tasks .task .branch {
+  display                            : block;
+}
+
+.block .task .branch_top {
+  width                              : 8px;
+  height                             : 9px;
+  border                             : 1px solid #b3caff;
+  border-top                         : 0;
+  float                              : right;
+  clear                              : both;
+}
+
+.block .max_nesting .task .branch_top {
+  border-bottom                      : 0;
+  border-left                        : 0;
+}
+
+.block .task .branch_bottom {
+  width                              : 8px;
+  height                             : 9px;
+  border                             : 1px solid #b3caff;
+  border-top                         : 0;
+  border-bottom                      : 0;
+  float                              : right;
+  clear                              : both;
+}
+
+.block .max_nesting .task .branch .branch_bottom,
+.block .task .branch.last .branch_bottom {
+  border-left                        : 0;
+  margin-left                        : 1px;
+  height                             : 9px;
+}
+
+.block .task .branch_link {
+  width                              : 9px;
+  border-left                        : 1px solid #b3caff;
+  float                              : right;
+  clear                              : both;
+}
+
+.block .max_nesting .task .branch .branch_link,
+.block .task .branch.last .branch_link {
+  display                            : none;
+}
+
+.block .task .content {
+  background-color                   : #e1e3fe;
+  border-bottom                      : 1px solid #b3caff;
+  border-top                         : 1px solid #b3caff;
+  height                             : 18px;
+  margin-top                         : -1px;
+  position                           : relative;
+  cursor                             : text;
+}
+
+.block .task.done .content,
+.block.done .task .content {
+  background-color                   : #ededed;
+}
+
+.block .task .content .drag_trigger {
+  position                           : absolute;
+  z-index                            : 5;
+  width                              : 100%;
+  height                             : 34%;
+  display                            : none;
+}
+
+.dragndrop_processing .block .task .content .drag_trigger {
+  display                            : block;
+}
+
+.dragndrop_processing .block .task.dragged .content .drag_trigger {
+  display                            : none;
+}
+
+.block .task .content .top_drag_trigger {
+  top : -1px;
+}
+
+.block .task .content .top_drag_trigger.hover,
+.block .task .content .top_drag_trigger:hover {
+  border-top                         : 2px solid #ee8d02;
+}
+
+.block .task .content .middle_drag_trigger {
+  height                            : 100%;
+  z-index                            : 4;
+}
+
+.block .task .content .middle_drag_trigger.hover,
+.block .task .content .middle_drag_trigger:hover {
+  border-bottom                       : 2px solid #ee8d02;
+  border-top                          : 2px solid #ee8d02;
+  top                                 : -2px;
+}
+
+.block .task .content .bottom_drag_trigger {
+  top : 67%;
+}
+.block .task .content .bottom_drag_trigger.hover,
+.block .task .content .bottom_drag_trigger:hover {
+  border-bottom                      : 2px solid #ee8d02;
+}
+
+.block .task .content textarea {
+  font-size                          : 10pt;
+  height                             : 100%;
+  position                           : relative;
+  overflow                           : hidden;
+}
+
+.block .task.done .content textarea,
+.block.done .task .content textarea {
+  color                              : gray;
+  text-decoration                    : line-through;
+}
+
+.block .task .tool_panel {
+  position                           : absolute;
+  right                              : 18px;
+  z-index                            : 3;
+  display                            : none;
+  background-color                   : #e1e3fe;
+  height                             : 18px;
+  width                              : 28px;
+}
+
+.block .task.done .tool_panel {
+  background-color                   : #ededed;
+}
+
+.dragndrop .block .task .tool_panel {
+  width                              : 38px;
+}
+
+.block .task .icon {
+  float                              : right;
+  margin-top                         : 4px;
+}
+
+.block .task .icon.remove {
+  margin-right                       : 4px;
+}
+
+.dragndrop .block .task .icon.create {
+  margin-right                       : 4px;
+}
+
+.block .task .content:hover .tool_panel {
+  display                            : block;
+}
+
+.block .task .content:hover .icon {
+  display                            : block;
+}
+
+.block .task .icon.arrow {
+  margin                             : 4px 7px 0 2px;
+  display                            : block;
+}
+
+.block .task .icon.arrow.expand {
+  margin                             : 7px 4px 0 0;
+}
+
+.block .task .sub_tasks {
+  padding-left                       : 18px;
+}
+
+.block .task .sub_tasks.max_nesting {
+  padding-left                       : 0;
+}
+
+/*** block footer ***/
+
+.block .footer {
+  height                             : 13px;
+  overflow                           : hidden;
+  border-top                         : 1px solid #b3caff;
+  position                           : relative;
+  top                                : -1px;
+}
+
+.block .footer * {
+  visibility                         : hidden;
+}
+
+.block:hover .footer * {
+  visibility                         : visible;
+}
+
+.block.collapsed .footer {
+  display                            : none;
+}
+
+.block .footer a {
+  font-size                          : 9px;
+  margin-top                         : 2px;
+}
+
+.block .footer a:hover {
+  cursor                             : pointer;
+  text-decoration                    : underline;
+}
+
+.block .footer a.collapse_all {
+  float                              : left;
+  margin-left                        : 15px;
+}
+
+.block .footer a.expand_all {
+  float                              : right;
+  margin-right                       : 15px;
+}
+
+/*** checkboxes ***/
+
+.big_checkbox {
+  float                              : left;
+  width                              : 20px;
+  height                             : 20px;
+  margin                             : 0 10px;
+  background                         : url('images/images.png') 0 -26px;
+  visibility                         : hidden;
+}
+
+.block:hover    .big_checkbox,
+.block.focused  .big_checkbox{
+  visibility                         : visible;
+}
+
+.big_checkbox:hover {
+  background                         : url('images/images.png') -40px -26px;
+}
+
+.block.done .big_checkbox {
+  background                         : url('images/images.png') -20px -26px;
+}
+
+.block.done .big_checkbox:hover {
+  background                         : url('images/images.png') -60px -26px;
+}
+
+.mini_checkbox {
+  float                              : left;
+  width                              : 10px;
+  height                             : 10px;
+  margin                             : 3px 7px 0 3px;
+  background-color                   : #f5f8ff;
+  border                             : 1px solid #b3caff;
+  visibility                         : hidden;
+  cursor                             : pointer;
+}
+
+.task .content:hover .mini_checkbox,
+.task .content.focused .mini_checkbox {
+  visibility                         : visible;
+}
+
+.task.done .mini_checkbox,
+.block.done .task .mini_checkbox {
+  background                         : url('images/images.png') -80px -26px;
+  border-color                       : #cccccc;
+}

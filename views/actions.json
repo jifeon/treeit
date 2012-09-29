@@ -10,7 +10,7 @@
       "next_id"         : {?next_serv_id}{next_serv_id}{:else}null{/next_serv_id},
       "parent_id"       :"{?parent_serv_id}{parent_serv_id}{:else}life{/parent_serv_id}",
       "serv_id"         : {?serv_id}{serv_id}{:else}null{/serv_id},
-      "ex_params"       :"{ex_params}"
+      "ex_params"       :'{?ex_params}{ex_params|s}{:else}{}{/ex_params}'
       }{@sep},{/sep}
       {/params.create}
       },
@@ -24,7 +24,7 @@
       "next_id"         : {?next_serv_id}{next_serv_id}{:else}null{/next_serv_id},
       "parent_id"       :"{?parent_serv_id}{parent_serv_id}{:else}life{/parent_serv_id}",
       "serv_id"         : {?serv_id}{serv_id}{:else}null{/serv_id},
-      "ex_params"       :"{ex_params}"
+      "ex_params"       :'{?ex_params}{ex_params|s}{:else}{}{/ex_params}'
       }{@sep},{/sep}
       {/params.create}
       },

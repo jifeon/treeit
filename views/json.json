@@ -19,5 +19,6 @@
     ]
   },
   "yii" : "ok",
-  "action" : "{action}"
+  "action" : "{action}",
+  "broadcast" : "true"
 }
