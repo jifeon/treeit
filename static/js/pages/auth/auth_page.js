@@ -21,16 +21,15 @@ AuthPage.prototype = new Ofio({
 
 
 AuthPage.prototype.initVars = function () {
-  this.auth_form            = {};
-  this.rem_form             = {};
-  this.reg_form             = {};
-  this.popups               = {};
+  this.auth_form            = new Form({ $ : $('#login')});
+  this.rem_form             = new Form({ $ : $('#remember')});
+  this.reg_form             = new Form({ $ : $('#registration')});
+  this.popups               = null;
   this.messages             = [];
-  this.reg_login_switch     = {};
-  this.features_switch      = {};
+  this.reg_login_switch     = null;
+  this.features_switch      = null;
   this.current_login_form   = 'auth';
-  this.current_form         = {};
-  this.failed_registration  = false;
+  this.current_form         = null;
   this.current_slide        = null;
   this.help_link            = $('.help_link');
 };
@@ -50,73 +49,51 @@ AuthPage.prototype.init = function ( params ) {
 
 
 AuthPage.prototype.init_forms = function () {
-  this.auth_form = new Form({
-    $         : $('#login'),
-    name      : 'User',
-    elements  : {
-      email : new Text({
-        $       : $('#email'),
-        rules   : { required : 1, email : 1 },
-        name    : 'E-mail'
-      }),
-      pass : new Text({
-        $       : $('#pass'),
-        rules   : { required : 1, len : { min : 6 }, latin_num_punto : 1 },
-        name    : 'Пароль',
-        trim    : false
-      }),
-      rememberMe : new FormCheckbox({
-        $       : $('#rememberMe')
-      })
+  var self = this;
+  this.auth_form.$.validate({
+    rules : {
+      'user[email]' : {
+        required      : true,
+        email         : true },
+
+      'user[pass]' : {
+        required      : true,
+        minlength     : 6 }
     },
-    submit_button : $('#login_submit')
+    submitHandler : function(){
+      self.auth_form.submit();
+    },
+    invalidHandler: function(form, validator) {
+      var errors = validator.numberOfInvalids();
+      if (errors) {
+        var message = errors == 1
+          ? 'You missed 1 field. It has been highlighted'
+          : 'You missed ' + errors + ' fields. They have been highlighted';
+        $("div.error span").html(message);
+        $("div.error").show();
+      } else {
+        $("div.error").hide();
+      }
+    }
   });
 
-  this.rem_form = new Form({
-    $ : $('#remember'),
-    name     : 'User',
-    elements : {
-      email : new Text({
-        $       : $('#email_rem'),
-        rules   : { required : 1, email : 1 },
-        name    : 'E-mail'
-      })
-    },
-    submit_button : $('#remember_submit')
+  this.rem_form.$.validate({
+    rules : {
+      'user[email]' : {
+        required      : true,
+        email         : true }
+    }
   });
 
-  this.reg_form = new Form({
-    $     : $("#registration"),
-    name  : 'User',
-    elements  : {
-      email : new Text({
-        $       : $('#email_reg'),
-        rules   : { required : 1, email : 1 },
-        name    : 'E-mail'
-      }),
-      realpass : new Text({
-        $       : $('#pass_reg'),
-        rules   : { required : 1, len : { min : 6 }, latin_num_punto : 1 },
-        name    : 'Пароль',
-        trim    : false
-      }),
-      pass2 : new Text({
-        $       : $('#pass2_reg'),
-        rules   : { required : 1, len : { min : 6 }, latin_num_punto : 1 },
-        name    : 'Повтор пароля',
-        trim    : false
-      })
-    },
-    submit_button : $('#reg_submit'),
-    on_validate   : function () {
-      var messages = [];
+  this.reg_form.$.validate({
+    rules : {
+      'user[email]' : {
+        required      : true,
+        email         : true },
 
-      if ( this.get_value( 'realpass' ) != this.get_value( 'pass2' ) ) messages.push({
-        message : 'Введенные пароли не совпадают',
-        type    : 'error'
-      });
-
-      return messages;
+      'user[pass]' : {
+        required      : true,
+        minlength     : 6 }
     }
   });
 
@@ -132,17 +109,14 @@ AuthPage.prototype.init_forms = function () {
 
   this.current_form = this.auth_form;
 
-  if ( this.failed_registration ) this.to_reg_form();
-  else {
-    this.auth_form.show();
-    this.auth_form.focus();
-  }
+  this.auth_form.show();
+  this.auth_form.focus();
 };
 
 
 AuthPage.prototype.to_rem_form = function () {
-  var email = this.current_form.get_value( 'email' );
-  if ( email ) this.rem_form.set_value( 'email', email );
+  var email = this.current_form.find('user[email]').val();
+  if ( email ) this.rem_form.find('user[email]').val( email );
 
   this.auth_form.hide();
   this.reg_form.hide();
@@ -155,8 +129,8 @@ AuthPage.prototype.to_rem_form = function () {
 
 
 AuthPage.prototype.to_auth_form = function () {
-  var email = this.current_form.get_value( 'email' );
-  if ( email ) this.auth_form.set_value( 'email', email );
+  var email = this.current_form.find('user[email]').val();
+  if ( email ) this.auth_form.find('user[email]').val( email );
 
   this.rem_form.hide();
   this.reg_form.hide();
@@ -169,8 +143,8 @@ AuthPage.prototype.to_auth_form = function () {
 
 
 AuthPage.prototype.to_reg_form = function () {
-  var email = this.current_form.get_value( 'email' );
-  if ( email ) this.reg_form.set_value( 'email', email );
+  var email = this.current_form.find('user[email]').val();
+  if ( email ) this.reg_form.find('user[email]').val( email );
 
   this.rem_form.hide();
   this.auth_form.hide();
@@ -208,7 +182,7 @@ AuthPage.prototype.init_switch = function () {
         }
       }
     ],
-    start_item : this.failed_registration ? 1 : 0
+    start_item : 0
   });
 
   this.features_switch = new Switch({
@@ -245,7 +219,7 @@ AuthPage.prototype.init_switch = function () {
         }
       }
     ],
-    start_item  : this.failed_registration ? 1 : 0,
+    start_item  : 0,
     auto_switch : {
       timeout : 10000
     }
@@ -257,9 +231,13 @@ AuthPage.prototype.init_switch = function () {
 
 AuthPage.prototype.init_triggers = function () {
   var self = this;
-  Form.on( 'submit.has_messages', function ( messages ) {
-    self.popups.add_messages( messages, true );
-  } );
+
+  Form.on( 'error', function(e){
+    self.popups.add_messages([{
+      type    : 'error',
+      message : e
+    }]);
+  });
 };
 
 

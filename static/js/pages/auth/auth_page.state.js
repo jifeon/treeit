@@ -36,21 +36,21 @@
         self.remove_state( self.STATE.SHOWN_LOGIN_FORM );
       } );
 
-      this.auth_form.elements.email.on( 'focus', function () {
-        self.add_state( self.STATE.LOGIN_FORM_EMAIL_ACTIVE );
-      } );
+      this.auth_form.find('user[email]')
+        .on( 'focus', function () {
+          self.add_state( self.STATE.LOGIN_FORM_EMAIL_ACTIVE );
+        } )
+        .on( 'blur', function () {
+          self.remove_state( self.STATE.LOGIN_FORM_EMAIL_ACTIVE );
+        } );
 
-      this.auth_form.elements.email.on( 'blur', function () {
-        self.remove_state( self.STATE.LOGIN_FORM_EMAIL_ACTIVE );
-      } );
-
-      this.auth_form.elements.pass.on( 'focus', function () {
-        self.add_state( self.STATE.LOGIN_FORM_PASS_ACTIVE );
-      } );
-
-      this.auth_form.elements.pass.on( 'blur', function () {
-        self.remove_state( self.STATE.LOGIN_FORM_PASS_ACTIVE );
-      } );
+      this.auth_form.find('user[pass]')
+        .on( 'focus', function () {
+          self.add_state( self.STATE.LOGIN_FORM_PASS_ACTIVE );
+        } )
+        .on( 'blur', function () {
+          self.remove_state( self.STATE.LOGIN_FORM_PASS_ACTIVE );
+        } );
 
 
       // rem_form
@@ -62,13 +62,13 @@
         self.remove_state( self.STATE.SHOWN_REM_FORM );
       } );
 
-      this.rem_form.elements.email.on( 'focus', function () {
-        self.add_state( self.STATE.REM_FORM_EMAIL_ACTIVE );
-      } );
-
-      this.rem_form.elements.email.on( 'blur', function () {
-        self.remove_state( self.STATE.REM_FORM_EMAIL_ACTIVE );
-      } );
+      this.rem_form.find('user[pass]')
+        .on( 'focus', function () {
+          self.add_state( self.STATE.REM_FORM_EMAIL_ACTIVE );
+        } )
+        .on( 'blur', function () {
+          self.remove_state( self.STATE.REM_FORM_EMAIL_ACTIVE );
+        } );
 
       // reg_form
       this.reg_form.on( 'visible.show', function () {

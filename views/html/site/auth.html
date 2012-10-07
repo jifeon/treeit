@@ -1,42 +1,40 @@
-{>"main.html"/}
+{>"html/main.html"/}
 
 {<content}
 <link rel="stylesheet" href="/css/reset.css">
 <link rel="stylesheet" href="/css/common.css">
 <link rel="stylesheet" href="/css/forms.css">
-<link rel="stylesheet" href="/css/blocks.css">
+<!--<link rel="stylesheet" href="/css/blocks.css">-->
 <link rel="stylesheet" href="/css/switch.css">
-<link rel="stylesheet" href="/css/todo.css">
+<link rel="stylesheet" href="/css/auth.css">
   
-<script type="text/javascript" src="js/lib/jquery.hotkeys.js"></script>
-<script type="text/javascript" src="js/lib/ofio/ofio.js"></script>
+<script type="text/javascript" src="/js/lib/jquery/jquery.hotkeys.js"></script>
+<script type="text/javascript" src="/js/lib/jquery/jquery.validate.min.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.js"></script>
 
-<script type="text/javascript" src="js/lib/wud/wud.jquery.js"></script>
-<script type="text/javascript" src="js/lib/wud/wud.visible.js"></script>
-<script type="text/javascript" src="js/lib/wud/wud.animate.js"></script>
+<script type="text/javascript" src="/js/lib/wud/wud.jquery.js"></script>
+<script type="text/javascript" src="/js/lib/wud/wud.visible.js"></script>
+<script type="text/javascript" src="/js/lib/wud/wud.animate.js"></script>
 
-<script type="text/javascript" src="js/lib/ofio/ofio.logger.js"></script>
-<script type="text/javascript" src="js/lib/ofio/ofio.event_emitter.js"></script>
-<script type="text/javascript" src="js/lib/ofio/ofio.utils.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.ajax.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.logger.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.event_emitter.js"></script>
+<script type="text/javascript" src="/js/lib/ofio/ofio.utils.js"></script>
 
-<script type="text/javascript" src="js/lib/forms/form_element.js"></script>
-<script type="text/javascript" src="js/lib/forms/form_element.checks.js"></script>
-<script type="text/javascript" src="js/lib/forms/form.js"></script>
-<script type="text/javascript" src="js/lib/forms/text.js"></script>
-<script type="text/javascript" src="js/lib/forms/form_checkbox.js"></script>
+<script type="text/javascript" src="/js/pages/auth/form.js"></script>
 
-<script type="text/javascript" src="js/lib/tools/popups.js"></script>
-<script type="text/javascript" src="js/lib/tools/hotkeys_panel.js"></script>
-<script type="text/javascript" src="js/lib/tools/switch/switch.js"></script>
-<script type="text/javascript" src="js/lib/tools/switch/switch_item.js"></script>
-<script type="text/javascript" src="js/lib/tools/popup_window.js"></script>
+<script type="text/javascript" src="/js/lib/tools/popups.js"></script>
+<script type="text/javascript" src="/js/lib/tools/hotkeys_panel.js"></script>
+<script type="text/javascript" src="/js/lib/tools/switch/switch.js"></script>
+<script type="text/javascript" src="/js/lib/tools/switch/switch_item.js"></script>
+<script type="text/javascript" src="/js/lib/tools/popup_window.js"></script>
 
-<script type="text/javascript" src="js/pages/page.state.js"></script>
-<script type="text/javascript" src="js/pages/page.hotkeys.js"></script>
+<script type="text/javascript" src="/js/pages/page.state.js"></script>
+<script type="text/javascript" src="/js/pages/page.hotkeys.js"></script>
 
-<script type="text/javascript" src="js/pages/auth/auth_page.state.js"></script>
-<script type="text/javascript" src="js/pages/auth/auth_page.hotkeys.js"></script>
-<script type="text/javascript" src="js/pages/auth/auth_page.js"></script>
+<script type="text/javascript" src="/js/pages/auth/auth_page.state.js"></script>
+<script type="text/javascript" src="/js/pages/auth/auth_page.hotkeys.js"></script>
+<script type="text/javascript" src="/js/pages/auth/auth_page.js"></script>
 
 
 <!--<? $this->renderPartial('help'); ?>-->
@@ -50,8 +48,7 @@
     type    : '{type}'
   }{@sep},{/sep}
     {/messages}
-  ],
-  failed_registration : {?failed_registration}'true'{:else}'false'{/failed_registration}
+  ]
   } );
 </script>
 
@@ -125,49 +122,42 @@
         <div class="switch_chooser"></div>
       </div>
 
-      <form class="info_block" id="registration" method="POST" action="/register">
+      <form class="info_block" id="registration" method="post" action="{#url}user.register{/url}">
         <div class="row">
           <label for="email_reg">E-mail:</label>
-          <input type="text" id="email_reg" value="{email}"/>
+          <input type="text" id="email_reg" name="user[email]" value="{email}"/>
         </div>
         <div class="row">
-          <label for="pass_reg">Password:</label>
-          <input type="password" id="pass_reg"/>
+          <label for="pass_reg">Пароль:</label>
+          <input type="password" id="pass_reg" name="user[pass]"/>
         </div>
-        <div class="row">
-          <label for="pass2_reg">Password:</label>
-          <input type="password" id="pass2_reg"/>
-        </div>
-        <a href="#" id='reg_submit' class="bottom_round_button">Register</a>
+        <a href="#" id='reg_submit' class="bottom_round_button" onclick="return page.reg_form.$.submit();">Готово</a>
       </form>
 
-      <form class="info_block" id="login" method="POST" action="/login">
+      <form class="info_block" id="login" method="post" action="{#url}user.login{/url}">
         <div class="row">
           <label for="email">E-mail:</label>
-          <input type="text" id="email" value='{email}' />
+          <input type="text" id="email" value='{email}' name="user[email]" />
         </div>
         <div class="row">
-          <label for="pass">Password:</label>
-          <input type="password" id="pass"/>
-          <a href="#" id="i_forgot" class="hint">Forgot password?</a>
+          <label for="pass">Пароль:</label>
+          <input type="password" id="pass" name="user[pass]"/>
+          <a href="#" id="i_forgot" class="hint">Забыли пароль?</a>
         </div>
         <div class="row last">
-          <label class="small right" for="rememberMe">Stay signed in</label>
-          <input type="checkbox" id="rememberMe" checked />
+          <label class="small right" for="rememberMe">Запомнить меня</label>
+          <input type="checkbox" id="rememberMe" name="remember" checked />
         </div>
-        <div style="font-size: 8pt;" class="look_here">
-          attention alfa
-        </div>
-        <a href="#" id='login_submit' class="bottom_round_button">Sign in</a>
+        <a href="#" id='login_submit' class="bottom_round_button" onclick="return page.auth_form.$.submit();">Войти</a>
       </form>
 
-      <form class="info_block" id="remember" method="POST" action="<?=Yii::app()->createUrl( 'site/remember' );?>">
+      <form class="info_block" id="remember" method="post" action="{#url}user.remember{/url}">
         <div class="row">
           <label for="email_rem">E-mail:</label>
-          <input type="text" id="email_rem"/>
-          <a href="#" id="i_recollect" class="hint">I recollect my password</a>
+          <input type="text" id="email_rem" name="user[email]"/>
+          <a href="#" id="i_recollect" class="hint">Я вспомнил пароль</a>
         </div>
-        <a href="#" id="remember_submit" class="bottom_round_button">Send</a>
+        <a href="#" id="remember_submit" class="bottom_round_button" onclick="return page.rem_form.$.submit();">Напомнить</a>
       </form>
     </div>
   </div>
@@ -175,6 +165,6 @@
 
 <div id="tree_image"></div>
 <a id="wmimg" href="http://www.megastock.ru/" target="_blank">
-  <!--<img src="../static/images/blue_rus1.gif" alt="www.megastock.ru" border="0">-->
+  <img src="/images/blue_rus1.gif" alt="www.megastock.ru" border="0">
 </a>
 {/content}

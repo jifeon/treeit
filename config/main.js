@@ -29,11 +29,12 @@ var config = module.exports = {
   router : {
     rules     : {
       ''                      : 'site.index',
-      '/register'             : 'site.register',
-      '/login'                : 'site.login',
-      '/logout'               : 'site.logout',
+      '/register'             : 'user.register | post',
+      '/login'                : 'user.login    | post',
+      '/logout'               : 'user.logout',
+      '/remember'             : 'user.remember | post',
 
-      '/save_task'             : 'site.save_task'
+      '/save_task'            : 'task.save_task | ws'
     }
   },
 
@@ -70,13 +71,15 @@ var config = module.exports = {
 
     db : {
       type      : 'mysql',
-      user      : 'root',
-      password  : '',
-      database  : 'treeit',
+      user      : 'test',
+      password  : 'test',
+      database  : 'le',
       host      : 'localhost'
     },
 
-    users    : true,
+    users    : {
+      model : 'user'
+    },
 
     // настройки логгера
     log_router          : {

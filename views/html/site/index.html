@@ -1,4 +1,4 @@
-{>"main.html"/}
+{>"html/main.html"/}
 
 {<content}
 <link rel="stylesheet" href="/css/reset.css">
@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/todo.css">
 
 <script type="text/javascript" src="/js/common.js"></script>
-<script type="text/javascript" src="/js/lib/jquery.hotkeys.js"></script>
+<script type="text/javascript" src="/js/lib/jquery/jquery.hotkeys.js"></script>
 <script type="text/javascript" src="/js/lib/ofio/ofio.js"></script>
   
 <script type="text/javascript" src="/js/lib/wud/wud.jquery.js"></script>
@@ -90,7 +90,7 @@
     history_revision  : {?user.revision_id}{user.revision_id}{:else}0{/user.revision_id},
     history_save_url  : '/save_task',
             pre_pay_url       : '#',
-    start_actions     : {>"task.json"/},
+    start_actions     : {>"json/task/task.json"/},
 //    features          : {
 //        '<?=implode( "' : 1, '", $user->get_features() )?>' : 1
 //    },

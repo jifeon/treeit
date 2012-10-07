@@ -1,0 +1,17 @@
+{
+  "name"          : "treeit",
+  "description"   : "Keyboard-centric service for brain storm",
+  "keywords"      : [ "treeit", "brainstorm", "gtd", "tasks" ],
+  "version"       : "0.2.0",
+  "author"        : "Andrey Balakirev <balakirev.andrey@gmail.com>",
+  "contributors"  : [ "Vladimir Balakirev <bvlvl2003@rambler.ru>" ],
+  "repository"    : {
+    "type" : "git",
+    "url"  : "https://github.com/jifeon/treeit"
+  },
+  "dependencies"  : {
+    "autodafe"          : ">=0.4.0",
+    "less"              : ">=1.2.2"
+  },
+  "engines"       : { "node": ">=0.4.0" }
+}

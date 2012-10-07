@@ -1,22 +1,29 @@
-var ActiveRecord = global.autodafe.db.ActiveRecord;
 var TasksPatch = require('../components/task_patch');
 var RevisionPatch = require('../components/revision_patch');
 var DBPatch = require('../components/dbpatch');
 var Emitter           = process.EventEmitter;
 
 
-module.exports = User.inherits( ActiveRecord );
+module.exports = User.inherits( global.autodafe.db.ActiveRecord );
 
 function User( params ) {
   this._init( params );
+}
+
+
+User.prototype._init = function( params ){
+  User.parent._init.call( this, params );
+
   this.pass2 = '';
   this.features_collected = false;
   this.features           = [];
 }
 
+
 User.prototype.get_table_name = function(){
   return 'user';
 }
+
 
 User.prototype.attributes = function(){
   return {
@@ -24,6 +31,11 @@ User.prototype.attributes = function(){
     email     : 'safe required email',
     realpass  : 'safe'
   };
+}
+
+
+User.prototype.cookie_hash = function(){
+  return this.pass;
 }
 
 //

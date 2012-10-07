@@ -170,7 +170,7 @@ Popups.prototype.close = function () {
  *      html : '',
  *      width : popup width
  *    },
- *    NUMBER  - look precreate message,
+ *    NUMBER  - precreate message,
  *    STRING  - message ( type == info, def. width )
  * ]
  * @param switch_to_it

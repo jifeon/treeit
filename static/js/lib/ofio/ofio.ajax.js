@@ -1,12 +1,10 @@
 ;( function () {
 
   var name        = 'ofio.ajax';
-  var dependences = [
+  var dependencies = [
     'ofio.logger',
     'ofio.event_emitter'
   ];
-
-
 
   var module = new function () {
 
@@ -19,113 +17,33 @@
         data      : params,
         type      : 'POST',
         error     : function ( xhr, status, e ) {
-          var err_msg;
-
-          switch ( status ) {
-            case 'timeout':
-              err_msg = 'Timeout';
-              break;
-
-            case 'notmodified':
-              err_msg = 'Not modified';
-              break;
-
-            case 'parsererror':
-              err_msg = 'Parser error';
-              break;
-
-            case 'error':
-            default:
-              err_msg = 'Unknown error';
-              break;
-          }
-
-          messages = {
-            errors : [
-              {
-                type     : 'server',
-                content  : err_msg + ( e ? '---' + e : '' )
-              }
-            ]
-          };
-
-          self.emit( 'ofio.ajax.error', messages );
-          callback( null, messages );
+          self.log( e );
+          self.emit( 'ofio.ajax.error', e );
+          callback( new Error('Server error, please reload the page'));
         },
 
         success   : function ( data ) {
-          if ( !data || data.yii != 'ok' ) {
-            messages = {
-              errors : [{
-                type    : 'server',
-                content : 'Unknown data type in request'
-              }]
-            };
-
-            self.emit( 'ofio.ajax.error', messages );
-            callback( null, messages );
+          if ( !data || data.error ) {
+            var e = data ? data.error : 'Server error, please reload the page';
+            self.emit( 'ofio.ajax.error', e );
+            callback( e );
           }
           else {
-            self.emit( 'ofio.ajax.success', data.messages );
-            callback( data.data, data.messages );
+            self.emit( 'ofio.ajax.success', data.result );
+            callback( null, data.result );
           }
         },
 
         dataType : 'json'
       })
     };
-
-    this.sjax = function ( url, params ) {
-      var self = this;
-
-      var data = $.ajax({
-        url       : url,
-        async     : false,
-        data      : params,
-        error     : function () {
-          var messages = {
-            errors : [{
-              type     : 'server',
-              content  : 'Unknown error'
-            }]
-          };
-
-          self.emit( 'ofio.ajax.error', messages );
-        }
-      }).responseText;
-
-      var unknown_data = false;
-
-      try {
-        eval( "data = " + data );
-      } catch ( e ) {
-        unknown_data = true;
-      }
-
-      if ( unknown_data || !data || data.yii != 'ok' ) {
-        var messages = {
-          errors : [
-            {
-              type     : 'server',
-              content  : 'Unknown data type in request'
-            }
-          ]
-        };
-
-        self.emit( 'ofio.ajax.error', messages );
-        return null;
-      }
-
-      self.emit( 'ofio.ajax.success', data.messages );
-      return data.data;
-    }
   };
 
 
   new Ofio.Module ( {
     name        : name,
     module      : module,
-    dependences : dependences
+    dependences : dependencies
   } );
 
 })();

@@ -1,4 +1,4 @@
-module.exports = Patch.inherits( autodafe.Component );
+module.exports = Patch.inherits( global.autodafe.Component );
 
 function Patch( params ){
   this._init( params );
