@@ -42,40 +42,32 @@ User.prototype.logout = function ( response, request ) {
 
 User.prototype.register = function ( response, request ) {
   var self      = this;
+  response.view_name('main');
+
   var listener  = response.create_listener();
-  var params = []
-  for( var i in request.params) params.push(request.params[i]);
-  // проверяем существует ли указанный логин
-  listener.stack <<= this.models.user.exists( 'email=:login', {
-    login : params[0]
+  listener.stack <<= this.models.user.exists( 'email=:email', {
+    email : request.params.user.email
   });
 
   listener.success( function( user_exists ){
-    // если логин уже занят - отправляем главную страницу с показом ошибки
-    if( user_exists ) {
-      response.merge_params({ errors : {
-        reg : { login : 'This login already in use' }
-      }});
+    if ( user_exists ) return response.send({
+      error : 'This login already in use'
+    });
 
-      return self.action( 'index', response, request );
-    }
-
-    // если нет - создаем модель пользователя
-    var user = new self.models.user;
-
-    // задаем ей параметры и сохраняем
-    user.email = params[0];
-    user.pass  = params[1];
-    user.realpass = params[2];
+    var user = new self.models.user( request.params.user );
     listener.stack <<= user.save();
+
     listener.success( function(){
-      listener.stack <<= self.create_start_tasks( user, response.create_listener() );
-      listener.success( function( template_params ){
+//      listener.stack <<= self.create_start_tasks( user, listener );
+//      listener.success( function( template_params ){
         // логиним клиент
-        self._login_client( request.client, user );
+//        self._login_client( request.client, user );
         // и редиректим его на главную
-        request.redirect('/');
-      });
+//        request.redirect('/');
+//      });
+
+      self.app.users.login( user, request, 365 );
+      request.redirect( self.create_url('site.index') );
     });
   });
 };

@@ -11,13 +11,12 @@ function User( params ) {
 }
 
 
-User.prototype._init = function( params ){
-  User.parent._init.call( this, params );
-
-  this.pass2 = '';
-  this.features_collected = false;
-  this.features           = [];
-}
+//User.prototype._init = function( params ){
+//  User.parent._init.call( this, params );
+//
+//  this.features_collected = false;
+//  this.features           = [];
+//}
 
 
 User.prototype.get_table_name = function(){
@@ -27,41 +26,27 @@ User.prototype.get_table_name = function(){
 
 User.prototype.attributes = function(){
   return {
-    pass      : 'safe required',
-    email     : 'safe required email',
-    realpass  : 'safe'
+    pass      : {
+      'safe required' : true,
+      'postfilters'   : 'md5'
+    },
+    email     : {
+      'safe required email' : true,
+      'prefilters'          : 'trim'
+    }
   };
 }
 
 
 User.prototype.cookie_hash = function(){
-  return this.pass;
+  return this.pass.md5();
 }
-
-//
-//    array( 'pass,email', 'length', 'max'=>128, 'min' => 6 ),
-//    array( 'email,pass', 'required'                       ),
-//    array( 'email',      'email'                          ),
-//    array( 'pass2', 'required', 'on'=>'register'          ),
-//    array( 'realpass', 'required', 'on'=>'register'       ),
-//    array( 'pass2', 'compare', 'on'=>'register', 'compareAttribute' => 'realpass' ),
-//    array( 'email', 'unique',
-//    'on'=>'register',
-//    'message' => 'Пользователь с таким email уже зарегистрирован в системе'
-//    ),
-//    array( 'realpass', 'match',
-//    'on'=>'register',
-//    'pattern' => "/^[a-zA-Z0-9.,!\\|?@#$%\\^&*()\\[\\]{}_+-=~:;'\"`<>\\/\\\\]*$/",
-//  'message' => "Пароль должен содержать только цифры, латинские буквы и знаки препинания"
-//  )
-//  );
-//  }
 
 
 
 User.prototype.relations = function () {
   return {
-    'tasks'       : this.has_many('task' ).by( 'user_id' )
+    'tasks'       : this.has_many('task').by('user_id')
 //    'dbfeatures'  : this.has_many('feature').by( 'user_has_feature( user_id, feature_id )' )
     }
 }
